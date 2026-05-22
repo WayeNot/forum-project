@@ -1,5 +1,12 @@
-# forum-project
+# Forum Project
 
-Projet de forum web réalisé en go, SQLite, HTML, CSS ET javaScript.
+Projet de forum web réalisé en Go, SQLite, HTML, CSS et JavaScript.
 
-## Objectif Creer une application web de type Reddit perttant au utilisatrus de discuter avec des posts , des commentaires, des likes/dislikes et des filtrs.-
+## Objectif
+
+Créer une application web de type Reddit permettant aux utilisateurs de discuter avec des posts, des commentaires, des catégories, des likes/dislikes et des filtres.
+
+## Documentation
+
+- Cahier des charges : `docs/cahier-des-charges.md`
+- Proposition de fondation équipe : `docs/proposition-equipe.md`

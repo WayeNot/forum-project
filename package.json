@@ -6,20 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/WayeNot/forum-project.git"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/WayeNot/forum-project/issues"
-  },
-  "homepage": "https://github.com/WayeNot/forum-project#readme",
-  "dependencies": {
+  "devDependencies": {
     "@tailwindcss/cli": "^4.3.0",
     "tailwindcss": "^4.3.0"
+  },
+  "dependencies": {
+    "sqlite": "^5.1.1"
   }
 }

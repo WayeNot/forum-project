@@ -10,3 +10,16 @@ Créer une application web de type Reddit permettant aux utilisateurs de discute
 
 - Cahier des charges : `docs/cahier-des-charges.md`
 - Proposition de fondation équipe : `docs/proposition-equipe.md`
+
+## Structure actuelle
+
+- `cmd/` : point d'entrée du serveur Go
+- `internal/` : logique interne de l'application
+- `web/` : fichiers HTML, CSS, JavaScript et assets
+- `docs/` : documentation du projet
+
+## Lancer le projet
+
+```powershell
+go run .\cmd\server
+```

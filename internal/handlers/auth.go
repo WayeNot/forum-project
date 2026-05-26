@@ -42,6 +42,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		err = bcrypt.CompareHashAndPassword([]byte(passwordDB), []byte(password))
 
 		if err != nil {
+			println(err.Error())
 			println("Erreur d'authentification !")
 			templates.Render("auth/login", w, r)
 			return
@@ -49,7 +50,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 		idSessionId := uuid.New().String()
 
-		request := `UPDATE FROM sessions SET is_active = FALSE WHERE user_id = ?`;
+		request := `UPDATE sessions SET is_active = FALSE WHERE user_id = ?`
 		_, err = db.DB.Exec(request, userID)
 
 		request = `INSERT INTO sessions (user_id, session_id) VALUES (?, ?)`
@@ -100,11 +101,14 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		bio = "No bio yet."
 		status = "Online"
 
-		var emailDb any
+		var mailDb any
 
-		reqIsEmailExist := `SELECT id FROM users WHERE email = ? OR username = ? LIMIT 1`
-		err := db.DB.QueryRow(reqIsEmailExist, username, mail).Scan(emailDb)
-		if err != nil {
+		//
+
+		reqIsMailExist := `SELECT id FROM users WHERE mail = ? OR username = ? LIMIT 1`
+		err := db.DB.QueryRow(reqIsMailExist, username, mail).Scan(&mailDb)
+
+		if mailDb != nil {
 			println("Erreur d'authentification !")
 			templates.Render("auth/register", w, r)
 			return
@@ -112,6 +116,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err != nil {
+			println(err.Error())
 			println("Erreur d'authentification !")
 			templates.Render("auth/register", w, r)
 			return
@@ -130,4 +135,19 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	templates.Render("auth/register", w, r)
+}
+
+func Logout(w http.ResponseWriter, r *http.Request) {
+	cookie := &http.Cookie{
+		Name:     "session_id",
+		Value:    "",
+		MaxAge:   0,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	}
+
+	http.SetCookie(w, cookie)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

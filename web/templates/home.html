@@ -16,7 +16,11 @@
             <a class="cursor-pointer transition duration-500 hover:text-white/90" href="/">Accueil</a>
             <a class="cursor-pointer transition duration-500 hover:text-white/90" href="/about">A propos</a>
             <a class="cursor-pointer transition duration-500 hover:text-white/90" href="/contact">Nous contacter</a>
+            {{if .IsLogged}}
+            <a class="cursor-pointer transition duration-500 hover:text-white/90" href="/logout">Logout</a>
+            {{else}}
             <a class="cursor-pointer transition duration-500 hover:text-white/90" href="/login">Connexion</a>
+            {{end}}
         </div>
     </nav>
 </body>

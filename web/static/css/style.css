@@ -1,23 +1,56 @@
-@import "tailwindcss";
+:root {
+    --main-color: rgba(255, 255, 255, 0.4);
+    --main-color2: rgba(255, 255, 255, 0.6);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    list-style: none;
+    text-decoration: none;
+}
 
 body {
-    background: #212529;
+    background-color: #1e2227;
+    color: var(--main-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: system-ui, sans-serif;
 }
 
-@keyframes slideDown {
-    0% {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+main {
+    width: 50%;
+    margin: 1rem auto;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 2rem);
 }
 
-.animate-slideDown {
-    animation: slideDown 0.3s ease-out;
+nav {
+    position: relative;
+    z-index: 50;
+    width: 50%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    padding: 1rem;
+    color: var(--main-color);
+}
+
+nav a {
+    text-decoration: none;
+    transition: color 0.3s ease;
+    cursor: pointer;
+    color: var(--main-color);
+}
+
+nav a:hover {
+    transition: all 0.5s ease-in-out;
+    color: var(--main-color2);
 }
 
 ::-webkit-scrollbar {

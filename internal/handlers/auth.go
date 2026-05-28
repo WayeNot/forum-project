@@ -53,7 +53,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		request := `UPDATE sessions SET is_active = FALSE WHERE user_id = ?`
 		_, err = db.DB.Exec(request, userID)
 
-		request = `INSERT INTO sessions (user_id, session_id) VALUES (?, ?)`
+		request = `INSERT INTO sessions (user_id, session_id, is_active) VALUES (?, ?, TRUE)`
 		_, err = db.DB.Exec(request, userID, idSessionId)
 
 		cookie := &http.Cookie{

@@ -11,9 +11,9 @@ import (
 const port = ":8080"
 
 func main() {
-	db.Init("../../forum.db")
+	db.Init("forum.db")
 
-	fs := http.FileServer(http.Dir("../../web/static"))
+	fs := http.FileServer(http.Dir("web/static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	http.HandleFunc("/", handlers.Home)

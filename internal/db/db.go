@@ -11,7 +11,7 @@ var DB *sql.DB
 func Init(path string) {
 	var err error
 
-	DB, err = sql.Open("sqlite3", "../../forum.db")
+	DB, err = sql.Open("sqlite3", "forum.db")
 	if err != nil {
 		log.Fatal(err)
 	}

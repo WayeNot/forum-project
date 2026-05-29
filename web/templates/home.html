@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Forum Plus - Accueil</title>
-        <link rel="stylesheet" href="/static/css/style.css?v=1">
+        <link rel="stylesheet" href="/static/css/style.css?v=2">
         <link rel="stylesheet" href="/static/css/home.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </head>
@@ -26,10 +26,14 @@
                     {{if .IsLogged}}
                     <!-- <h2>Bienvenue {{.UserData.Username}}</h2> -->
                     <img class="avatar" src="{{.UserData.PpURL}}" alt="User logo">
-                    <div id="createPost" style="display: flex; flex-direction: column;">
-                        <input id="inputText" required name="usernameOrMail" placeholder="Titre du poste" type="text" />
-                        <textarea class="textarea" placeholder="Description"></textarea>
-                    </div>
+                    <form id="createPost" action="/createPost" method="post">
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <input class="inputText" required name="title" placeholder="Titre du poste" type="text" />
+                            <textarea name="Description" class="textarea" placeholder="Description"></textarea>
+                            <input class="inputText" required name="media" placeholder="Image du poste" type="text" />
+                        </div>
+                        <button type="submit">Continuer</button>
+                    </form>
                     {{else}}
                         <h2>Vous devez être connecté pour créer un poste !</h2>
                     {{end}}

@@ -101,14 +101,19 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		bio = "No bio yet."
 		status = "Online"
 
-		var mailDb any
-
-		//
+		user_id := 0
 
 		reqIsMailExist := `SELECT id FROM users WHERE mail = ? OR username = ? LIMIT 1`
-		err := db.DB.QueryRow(reqIsMailExist, username, mail).Scan(&mailDb)
+		err := db.DB.QueryRow(reqIsMailExist, username, mail).Scan(&user_id)
 
-		if mailDb != nil {
+		if err != nil {
+			println(err.Error());
+			return
+		}
+
+		println(user_id)
+
+		if user_id == 0 {
 			println("Erreur d'authentification !")
 			templates.Render("auth/register", w, r)
 			return

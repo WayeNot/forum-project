@@ -20,6 +20,7 @@ func main() {
 	http.HandleFunc("/login", handlers.Login)
 	http.HandleFunc("/register", handlers.Register)
 	http.HandleFunc("/logout", handlers.Logout)
+	http.HandleFunc("/createPost", handlers.CreatePost)
 
 	fmt.Printf("✅ Serveur lancé sur http://localhost%s\n", port)
 	http.ListenAndServe(port, nil)

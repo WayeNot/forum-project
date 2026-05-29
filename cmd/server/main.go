@@ -1,7 +1,26 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/WayeNot/forum-project/internal/db"
+	"github.com/WayeNot/forum-project/internal/handlers"
+)
+
+const port = ":8080"
 
 func main() {
-	fmt.Println("Forum server")
+	db.Init("forum.db")
+
+	fs := http.FileServer(http.Dir("web/static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
+
+	http.HandleFunc("/", handlers.Home)
+	http.HandleFunc("/login", handlers.Login)
+	http.HandleFunc("/register", handlers.Register)
+	http.HandleFunc("/logout", handlers.Logout)
+
+	fmt.Printf("Serveur lance sur http://localhost%s\n", port)
+	http.ListenAndServe(port, nil)
 }

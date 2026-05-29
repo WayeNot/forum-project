@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum Plus</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=2">
+    <link rel="stylesheet" href="/static/css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <nav>
+        <a href="/"><i class="fa-solid fa-house-chimney"></i></a>
+    </nav>
+
+    <div class="overlay"></div>
+
+    <div class="auth">
+        <div class="authForm">
+            <h2 class="login-title">Inscription</h2>
+            <hr/>
+
+            <form action="/register" method="post" class="auth-form">
+                <div class="input-group">
+                    <input name="username" class="form-input" required placeholder="Nom d'utilisateur" type="text" />
+                    <input name="mail" class="form-input" required placeholder="Adresse mail" type="mail" />
+                    <input name="password" class="form-input" required placeholder="Mot de passe" type="password" />
+                </div>
+
+                <button type="submit" class="btn-submit">Continuer</button>
+
+                <div class="form-links">
+                    <a href="/login" class="form-link">Connexion</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

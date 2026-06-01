@@ -39,7 +39,13 @@
 .authForm {
     width: 100%;
     max-width: 28rem;
-    background-color: var(--white-5);
+    background-image:
+        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+        url("../../../img/home-background.jpg");             
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
     border: 1px solid var(--accent-blue);
     border-radius: 8px;
     padding: 2rem;
@@ -47,6 +53,7 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
 }
+
 
 .authForm h2 {
     font-size: 2.5rem;
@@ -166,7 +173,7 @@
 
 .form-link:hover {
     color: var(--accent-blue);
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 

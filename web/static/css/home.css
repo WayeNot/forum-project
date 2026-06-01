@@ -21,6 +21,16 @@ body {
     background-repeat: no-repeat;
     background-color: #363a3f;
 }
+h1 {
+    font-size: 50px;
+}
+.welcome-text {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 50px;          
+    color: rgba(0, 0, 0, 0.6);
+}
 
 .input-row {
     display: flex;

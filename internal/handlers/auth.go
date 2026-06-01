@@ -111,8 +111,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		println(user_id)
-
 		if user_id == 0 {
 			println("Erreur d'authentification !")
 			templates.Render("auth/register", w, r)

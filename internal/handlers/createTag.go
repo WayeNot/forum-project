@@ -22,7 +22,7 @@ func CreateTag(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var userID int
-	const requestUserID = `SELECT user_id FROM sessions WHERE session_id = ? LIMIT 1`
+	const requestUserID = `SELECT user_id FROM sessions WHERE session_id = ? AND is_active = TRUE LIMIT 1`
 	err = db.DB.QueryRow(requestUserID, session.Value).Scan(&userID)
 	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)

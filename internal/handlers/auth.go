@@ -33,7 +33,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		query := `SELECT password, id FROM users WHERE username = ? OR mail = ?`
 		err := db.DB.QueryRow(query, usernameOrMail, usernameOrMail).Scan(&passwordDB, &userID)
 
-		if len(passwordDB) == 0 {
+		if err != nil || len(passwordDB) == 0 {
 			println("Erreur d'authentification !")
 			templates.Render("auth/login", w, r)
 			return
@@ -52,9 +52,19 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 		request := `UPDATE sessions SET is_active = FALSE WHERE user_id = ?`
 		_, err = db.DB.Exec(request, userID)
+		if err != nil {
+			println(err.Error())
+			templates.Render("auth/login", w, r)
+			return
+		}
 
 		request = `INSERT INTO sessions (user_id, session_id, is_active) VALUES (?, ?, TRUE)`
 		_, err = db.DB.Exec(request, userID, idSessionId)
+		if err != nil {
+			println(err.Error())
+			templates.Render("auth/login", w, r)
+			return
+		}
 
 		cookie := &http.Cookie{
 			Name:     "session_id",
@@ -142,6 +152,14 @@ func Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
+	session, err := r.Cookie("session_id")
+	if err == nil && session.Value != "" {
+		_, err = db.DB.Exec(`UPDATE sessions SET is_active = FALSE WHERE session_id = ?`, session.Value)
+		if err != nil {
+			println(err.Error())
+		}
+	}
+
 	cookie := &http.Cookie{
 		Name:     "session_id",
 		Value:    "",

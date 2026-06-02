@@ -56,7 +56,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 	if err == nil && session.Value != "" {
 		var user_id int
-		const requestUserId = `SELECT user_id FROM sessions WHERE session_id = ? LIMIT 1`
+		const requestUserId = `SELECT user_id FROM sessions WHERE session_id = ? AND is_active = TRUE LIMIT 1`
 		cleanSessionValue := strings.TrimSpace(session.Value)
 		err = db.DB.QueryRow(requestUserId, cleanSessionValue).Scan(&user_id)
 

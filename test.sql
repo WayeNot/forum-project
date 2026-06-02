@@ -1,0 +1,1 @@
+CREATE TABLE users2 (id INTEGER);

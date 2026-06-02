@@ -1,20 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Forum Plus - Accueil</title>
-        <link rel="stylesheet" href="/static/css/style.css?v=1">
-        <link rel="icon" href="/img/music-icon-ico-1.png">
-        <link rel="stylesheet" href="/static/css/home.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    </head>
+
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum Plus - Accueil</title>
     <link rel="stylesheet" href="/static/css/style.css?v=1">
+    <link rel="icon" href="/img/music-icon-ico-1.png">
     <link rel="stylesheet" href="/static/css/home.css?v=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
@@ -24,7 +17,7 @@
 <body>
     <main>
         <sidebar>
-            <h2>Tout les tags: </h2>
+            <h2>Tous les tags :</h2>
             <div class="tag-list">
                 {{range .Tags}}
                 <a href="/?tag={{.}}" class="tag-item">#{{.}}</a>
@@ -83,8 +76,6 @@
                     {{else}}
                         <div class="welcome-text">
                             <h1>Bienvenue dans votre forum de musique préféré</h1>
-                            <h2>coucou</h2>
-                            <h3>salut</h3>
                         </div>
                     {{end}}               
                 </div>

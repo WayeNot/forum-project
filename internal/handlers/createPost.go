@@ -1,9 +1,10 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/WayeNot/forum-project/internal/db"
 	"github.com/WayeNot/forum-project/internal/templates"
-	"net/http"
 )
 
 type PostData struct {
@@ -18,29 +19,21 @@ type PostData struct {
 
 func CreatePost(w http.ResponseWriter, r *http.Request) {
 	var postData PostData
-	var user_id int
+	var userID int
 
 	session, err := r.Cookie("session_id")
-
-	if err != nil {
-		println(err.Error())
-		println("Erreur lors de la récupération du cookie de session")
-		templates.Render("creator/createPost", w, r)
+	if err != nil || session.Value == "" {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
-	if err == nil && session.Value != "" {
-		const requestUserId = `SELECT user_id FROM sessions WHERE session_id = ? LIMIT 1`
-		cleanSessionValue := session.Value
-		err = db.DB.QueryRow(requestUserId, cleanSessionValue).Scan(&user_id)
-
-		if err != nil {
-			println(err.Error())
-			println("Erreur lors de la récupération de l'ID de l'utilisateur")
-		} else {
-			postData.Author_id = user_id
-		}
+	const requestUserID = `SELECT user_id FROM sessions WHERE session_id = ? AND is_active = TRUE LIMIT 1`
+	err = db.DB.QueryRow(requestUserID, session.Value).Scan(&userID)
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
 	}
+	postData.Author_id = userID
 
 	if r.Method == "POST" {
 		postData.Title = r.FormValue("title")
@@ -56,10 +49,9 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 		const insertPost = `INSERT INTO posts (title, description, author_id, image_url, tags) VALUES (?, ?, ?, ?, ?)`
 		_, err := db.DB.Exec(insertPost, postData.Title, postData.Description, postData.Author_id, postData.Image_url, postData.Tags)
-
 		if err != nil {
 			println(err.Error())
-			println("Erreur lors de la création du post")
+			println("Erreur lors de la creation du post")
 			templates.Render("creator/createPost", w, r)
 			return
 		}
@@ -67,5 +59,6 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+
 	templates.Render("creator/createPost", w, r)
 }

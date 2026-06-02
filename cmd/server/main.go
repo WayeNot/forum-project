@@ -8,13 +8,16 @@ import (
 	"github.com/WayeNot/forum-project/internal/handlers"
 )
 
-const port = ":8080"
+const port = ":5500"
 
 func main() {
 	db.Init("forum.db")
 
 	fs := http.FileServer(http.Dir("web/static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
+
+	imgFs := http.FileServer(http.Dir("img"))
+	http.Handle("/img/", http.StripPrefix("/img/", imgFs))
 
 	http.HandleFunc("/", handlers.Home)
 	http.HandleFunc("/login", handlers.Login)

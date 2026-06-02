@@ -1,11 +1,17 @@
 :root {
-    --main-bg: #363a3f;
-    --main-color: rgba(255, 255, 255, 0.4);
+
+    --main-bg: #121212;
+    --main-color: rgba(255, 255, 255, 0.8);
     --main-color2: rgba(255, 255, 255, 0.6);
+    --accent-blue: #00B4D8;
+    --accent-red: #FF4040;
+    --accent-gold: #FFD700;
+    --accent-purple: #9D00FF;
     --white-5: rgba(255, 255, 255, 0.05);
-    --white-20: rgba(255, 255, 255, 0.2);
-    --white-80: rgba(255, 255, 255, 0.8);
+    --white-20: rgba(255, 255, 255, 0.2);  
+    --white-80: rgba(255, 255, 255, 0.8);  
 }
+
 
 .overlay {
     position: fixed;
@@ -13,8 +19,9 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.5);
     z-index: 30;
+    backdrop-filter: blur(5px);
 }
 
 .auth {
@@ -32,28 +39,39 @@
 .authForm {
     width: 100%;
     max-width: 28rem;
-    background-color: var(--white-5);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    padding: 1.5rem;
-    animation: fadeIn 0.3s ease-out;
+    background-image:
+        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+        url("../../../img/home-background.jpg");             
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    border: 1px solid var(--accent-blue);
+    border-radius: 8px;
+    padding: 2rem;
+    animation: fadeIn 0.5s ease-out;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
 }
 
+
 .authForm h2 {
-    font-size: 35px;
-    font-weight: bold;
-    color: rgba(255, 255, 255, 0.7);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent-blue);
     text-align: center;
-    font-family: monospace;
+    font-family: 'Bebas Neue', sans-serif;
     width: 100%;
-    margin-top: 0;
-    margin-bottom: 1rem;
+    margin: 0 0 1.5rem;
+    text-shadow: 0 0 10px rgba(0, 180, 216, 0.3);
+    letter-spacing: 1px;
 }
 
 .authForm hr {
     border: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.7);
+    border-top: 1px solid var(--white-20);
     width: 80%;
-    margin: 1.25rem auto;
+    margin: 1.5rem auto;
 }
 
 .auth-form {
@@ -61,86 +79,136 @@
     flex-direction: column;
     align-items: center;
     width: 80%;
-    margin: auto;
-    gap: 1rem;
+    margin: 0 auto;
+    gap: 1.5rem;
 }
 
 .input-group {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
+    align-items: flex-start;
     width: 100%;
+    gap: 0.5rem;
 }
 
 .form-input {
     width: 100%;
     box-sizing: border-box;
-    border: 2px solid rgba(255, 255, 255, 0.4);
+    border: 2px solid var(--white-20);
     background: transparent;
-    font-family: monospace;
-    font-size: 20px;
-    color: rgba(255, 255, 255, 0.8);
-    padding: 0.375rem;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    color: var(--main-color);
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.2);
 }
 
 .input-password {
-    margin-top: 0.25rem;
+    position: relative;
+}
+
+.input-password svg {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--white-20);
+    cursor: pointer;
 }
 
 .btn-submit {
     width: 100%;
-    background: transparent;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
-    border: 2px solid rgba(255, 255, 255, 0.4);
-    color: rgba(255, 255, 255, 0.4);
-    padding: 0.5rem;
-    font-family: monospace;
-    font-size: 20px;
-    transition: all 500ms ease;
+    border: none;
+    color: white;
+    padding: 0.75rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.25rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 180, 216, 0.3);
 }
 
 .btn-submit:hover {
-    background-color: rgba(255, 255, 255, 0.4);
-    border-color: rgba(255, 255, 255, 0.4);
-    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 180, 216, 0.5);
+    background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
 }
 
 .form-links {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
     gap: 0.75rem;
     width: 100%;
-    color: rgba(255, 255, 255, 0.2);
-    font-family: monospace;
-    font-size: 14px;
+    color: var(--white-20);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
 }
 
 .form-link {
-    color: inherit;
+    color: var(--white-20);
     text-decoration: none;
     cursor: pointer;
-    transition: color 500ms ease;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .form-link:hover {
-    text-decoration: underline;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--accent-blue);
+    text-decoration: none;
+}
+
+
+.form-link::before {
+    content: "🎵";
+    font-size: 1.2rem;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
 }
+
+@keyframes noteBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+
+.music-element {
+    animation: noteBounce 2s infinite;
+}
+
+.flair {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.flair-rock { background: #FF4040; color: white; }
+.flair-electro { background: #00B4D8; color: white; }
+.flair-classical { background: #FFD700; color: #121212; }
+.flair-hiphop { background: #9D00FF; color: white; }
+.flair-jazz { background: #8A2BE2; color: white; }

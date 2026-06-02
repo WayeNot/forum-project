@@ -1,2 +1,11 @@
+# Base de données locale
 *.db
 *.db-*
+
+# Fichiers temporaires
+*.tmp
+*.log
+
+# Système
+.DS_Store
+Thumbs.db

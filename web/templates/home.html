@@ -10,26 +10,75 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </head>
 
-    <body>
-        <main>
-            <nav>
-                <a href="/"><i class="fa-solid fa-house text-lg"></i></a>
-                {{if .IsLogged}}
-                <a href="/messages"><i class="fa-solid fa-comment-dots text-lg"></i></a>
-                <a href="/profile"><i class="fa-solid fa-user-gear text-lg"></i></a>
-                <a href="/logout"><i class="fa-solid fa-right-from-bracket text-lg"></i></a>
-                {{else}}
-                <a href="/login"><i class="fa-solid fa-person-circle-plus"></i></a>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum Plus - Accueil</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=1">
+    <link rel="stylesheet" href="/static/css/home.css?v=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <main>
+        <sidebar>
+            <h2>Tout les tags: </h2>
+            <div class="tag-list">
+                {{range .Tags}}
+                <a href="/?tag={{.}}" class="tag-item">#{{.}}</a>
                 {{end}}
-            </nav>
-            <section>
-                <div class="input-row">
-                    {{if .IsLogged}}
-                    <!-- <h2>Bienvenue {{.UserData.Username}}</h2> -->
-                    <img class="avatar" src="{{.UserData.PpURL}}" alt="User logo">
-                    <div id="createPost" style="display: flex; flex-direction: column;">
-                        <input id="inputText" required name="usernameOrMail" placeholder="Titre du poste" type="text" />
-                        <textarea class="textarea" placeholder="Description"></textarea>
+            </div>
+        </sidebar>
+        <nav>
+            <a href="/"><i class="fa-solid fa-house text-lg"></i></a>
+            {{if .IsLogged}}
+            <a href="/createPost"><i class="fa-solid fa-circle-plus"></i></a>
+            <a href="/createTag"><i class="fa-solid fa-tag"></i></a>
+            <a href="/messages"><i class="fa-solid fa-comment-dots text-lg"></i></a>
+            <a href="/profile"><i class="fa-solid fa-user-gear text-lg"></i></a>
+            <a href="/logout"><i class="fa-solid fa-right-from-bracket text-lg"></i></a>
+            {{else}}
+            <a href="/login"><i class="fa-solid fa-person-circle-plus"></i></a>
+            {{end}}
+            {{if .Error}}
+            <p style="color: red;">{{.Error}}</p>
+            {{end}}
+        </nav>
+        <section class="post-container">
+            {{if .Posts}}
+            <h2 class="post-count">Posts récents ( {{len .Posts}} {{if eq (len .Posts) 1}}post{{else}}posts{{end}} )
+            </h2>
+            {{else}}
+            <h2 class="post-count">Aucun post</h2>
+            {{end}}
+            {{if .Posts}}
+            <div class="post-grid">
+                {{range .Posts}}
+                <div class="post-card">
+                    <div class="post-card-header">
+                        <a href="/profile/@{{.author_name}}" class="auth">
+                            <img src="{{.author_pp}}" alt="Photo de profil de {{.author_name}}" class="auth-pp">
+                            <p>{{.author_name}}</p>
+                        </a>
+                        <p class="post-card-ago">Il y a {{.time_ago}}</p>
+                    </div>
+                    <div class="post-card-content">
+                        <p class="post-card-title">{{.title}}</p>
+                        <p class="post-card-description">{{.description}}</p>
+                        {{if .image_url}}
+                        <p>{{.image_url}}</p>
+                        <img src="{{.image_url}}" alt="Image du post" class="post-card-image">
+                        {{end}}
+                        <div class="post-card-tags">
+                            {{range .tags}}
+                            <a href="/?tag={{.}}" class="post-tag">#{{.}}</a>
+                            {{end}}
+                        </div>
+                        <div class="post-card-actions">
+                            <a href="/post/{{.id}}" class="post-link">Voir le post</a>
+                        </div>
                     </div>
                     {{else}}
                         <div class="welcome-text">
@@ -39,7 +88,11 @@
                         </div>
                     {{end}}               
                 </div>
-            </section>
-        </main>
-    </body>
+                {{end}}
+            </div>
+            {{end}}
+        </section>
+    </main>
+</body>
+
 </html>

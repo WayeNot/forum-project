@@ -64,11 +64,23 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	const postsQuery = `SELECT posts.id, posts.title, posts.description, posts.author_id, posts.image_url, posts.tags, posts.created_at, users.username FROM posts INNER JOIN users ON posts.author_id = users.id ORDER BY posts.created_at DESC`
 	rows, err := db.DB.Query(postsQuery)
 
+	rowsData := []map[string]any{}
+
 	if err != nil {
 		println(err.Error())
+
+		data := map[string]any{
+			"IsLogged": isLogged,
+			"UserData": userData,
+			"Posts":    rowsData,
+			"Tags":     []string{},
+		}
+
+		templates.Render("home", w, data)
+		return
 	}
 
-	rowsData := []map[string]any{}
+	defer rows.Close()
 
 	for rows.Next() {
 		var id int

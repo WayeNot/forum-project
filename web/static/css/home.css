@@ -10,6 +10,14 @@ a {
     color: inherit;
 }
 
+main {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    border: 1px solid red;
+}
+
 section {
     flex: 1;
     padding: 1rem;
@@ -33,7 +41,7 @@ section {
 
 /* Liste des tags */
 
-sidebar {
+#sidebar {
     background-color: #212529;
     border: 2px solid rgba(255, 255, 255, 0.4);
     border-radius: 8px;

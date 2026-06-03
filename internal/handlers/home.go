@@ -28,7 +28,6 @@ func getAllTags() []string {
 		return []string{}
 	}
 	allTags := strings.Split(allTagsStr, ",")
-	println("Tags récupérés :", len(allTags))
 	return allTags
 }
 

@@ -8,12 +8,27 @@ import (
 
 type TagData struct {
 	Id          int
-	Name       string
+	Name        string
 	Description string
 }
 
 func CreateTag(w http.ResponseWriter, r *http.Request) {
 	var postData TagData
+
+	session, err := r.Cookie("session_id")
+
+	if err != nil {
+		println("Erreur lors de la récupération du cookie de session")
+		println(err.Error())
+		templates.Render("/", w, r)
+		return
+	}
+
+	if session.Value == "" {
+		println("Vous devez être connecté pour créer un tag")
+		templates.Render("/", w, r)
+		return
+	}
 
 	if r.Method == "POST" {
 		postData.Name = r.FormValue("name")

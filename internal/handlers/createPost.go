@@ -29,7 +29,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err == nil && session.Value != "" {
+	if session.Value != "" {
 		const requestUserId = `SELECT user_id FROM sessions WHERE session_id = ? LIMIT 1`
 		cleanSessionValue := session.Value
 		err = db.DB.QueryRow(requestUserId, cleanSessionValue).Scan(&user_id)
@@ -40,6 +40,10 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		} else {
 			postData.Author_id = user_id
 		}
+	} else {
+		println("Vous devez être connecté pour créer un post")
+		templates.Render("/", w, r)
+		return
 	}
 
 	if r.Method == "POST" {

@@ -6,24 +6,24 @@
     <title>Forum Plus - Accueil</title>
 
     <link rel="stylesheet" href="/static/css/style.css?v=1">
+    <link rel="icon" href="/img/music-icon-ico-1.png">
     <link rel="stylesheet" href="/static/css/home.css?v=1">
     <link rel="icon" href="/img/music-icon-ico-1.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
-
 <body>
     <main>
-
-        <aside>
+        <sidebar>
             <h2>Tous les tags :</h2>
             <div class="tag-list">
                 {{range .Tags}}
                     <a href="/?tag={{.}}" class="tag-item">#{{.}}</a>
                 {{end}}
             </div>
-        </aside>
+        </sidebar>
 
         <nav>
             <a href="/"><i class="fa-solid fa-house"></i></a>
@@ -46,28 +46,27 @@
         <section class="post-container">
 
             {{if .Posts}}
-                <h2 class="post-count">
-                    Posts récents ( {{len .Posts}} {{if eq (len .Posts) 1}}post{{else}}posts{{end}} )
-                </h2>
-
-                <div class="post-grid">
-                    {{range .Posts}}
-                    <div class="post-card">
-
-                        <div class="post-card-header">
-                            <a href="/profile/@{{.author_name}}" class="auth">
-                                <img src="{{.author_pp}}" alt="Photo de profil" class="auth-pp">
-                                <p>{{.author_name}}</p>
-                            </a>
-                            <p class="post-card-ago">Il y a {{.time_ago}}</p>
-                        </div>
-
-                        <div class="post-card-content">
-                            <p class="post-card-title">{{.title}}</p>
-                            <p class="post-card-description">{{.description}}</p>
-
-                            {{if .image_url}}
-                                <img src="{{.image_url}}" alt="Image du post" class="post-card-image">
+            <h2 class="post-count">Posts recents ( {{len .Posts}} {{if eq (len .Posts) 1}}post{{else}}posts{{end}} )</h2>
+            <div class="post-grid">
+                {{range .Posts}}
+                <div class="post-card">
+                    <div class="post-card-header">
+                        <a href="/profile/@{{.author_name}}" class="auth">
+                            <img src="{{.author_pp}}" alt="Photo de profil de {{.author_name}}" class="auth-pp">
+                            <p>{{.author_name}}</p>
+                        </a>
+                        <p class="post-card-ago">Il y a {{.time_ago}}</p>
+                    </div>
+                    <div class="post-card-content">
+                        <p class="post-card-title">{{.title}}</p>
+                        <p class="post-card-description">{{.description}}</p>
+                        {{if .image_url}}
+                        <p>{{.image_url}}</p>
+                        <img src="{{.image_url}}" alt="Image du post" class="post-card-image">
+                        {{end}}
+                        <div class="post-card-tags">
+                            {{range .tags}}
+                            <a href="/?tag={{.}}" class="post-tag">#{{.}}</a>
                             {{end}}
 
                             <div class="post-card-tags">
@@ -82,14 +81,11 @@
                         </div>
 
                     </div>
-                    {{end}}
                 </div>
-
+                {{end}}
+            </div>
             {{else}}
-                <div class="welcome-text">
-                    <h1>Bienvenue dans votre forum de musique préféré 🎵</h1>
-                </div>
-
+            <h2 class="post-count">Aucun post</h2>
             {{end}}
 
         </section>

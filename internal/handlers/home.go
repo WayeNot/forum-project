@@ -18,18 +18,30 @@ type UserData struct {
 }
 
 func getAllTags() []string {
-	const queryTags = `SELECT name FROM tags`
-	var allTagsStr string
-	err := db.DB.QueryRow(queryTags).Scan(&allTagsStr)
+	const queryTags = `SELECT name FROM tags ORDER BY name ASC`
+
+	rows, err := db.DB.Query(queryTags)
 	if err != nil {
 		println(err.Error())
-	}
-	if allTagsStr == "" {
 		return []string{}
 	}
-	allTags := strings.Split(allTagsStr, ",")
-	println("Tags récupérés :", len(allTags))
-	return allTags
+	defer rows.Close()
+
+	tags := []string{}
+
+	for rows.Next() {
+		var tagName string
+
+		err = rows.Scan(&tagName)
+		if err != nil {
+			println(err.Error())
+			continue
+		}
+
+		tags = append(tags, tagName)
+	}
+
+	return tags
 }
 
 func Home(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +56,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 	if err == nil && session.Value != "" {
 		var user_id int
-		const requestUserId = `SELECT user_id FROM sessions WHERE session_id = ? LIMIT 1`
+		const requestUserId = `SELECT user_id FROM sessions WHERE session_id = ? AND is_active = TRUE LIMIT 1`
 		cleanSessionValue := strings.TrimSpace(session.Value)
 		err = db.DB.QueryRow(requestUserId, cleanSessionValue).Scan(&user_id)
 
@@ -64,11 +76,23 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	const postsQuery = `SELECT posts.id, posts.title, posts.description, posts.author_id, posts.image_url, posts.tags, posts.created_at, users.username FROM posts INNER JOIN users ON posts.author_id = users.id ORDER BY posts.created_at DESC`
 	rows, err := db.DB.Query(postsQuery)
 
+	rowsData := []map[string]any{}
+
 	if err != nil {
 		println(err.Error())
+
+		data := map[string]any{
+			"IsLogged": isLogged,
+			"UserData": userData,
+			"Posts":    rowsData,
+			"Tags":     []string{},
+		}
+
+		templates.Render("home", w, data)
+		return
 	}
 
-	rowsData := []map[string]any{}
+	defer rows.Close()
 
 	for rows.Next() {
 		var id int

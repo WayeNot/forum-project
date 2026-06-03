@@ -25,7 +25,7 @@ func main() {
 	http.HandleFunc("/logout", handlers.Logout)
 	http.HandleFunc("/createPost", handlers.CreatePost)
 	http.HandleFunc("/createTag", handlers.CreateTag)
-	
-	fmt.Printf("✅ Serveur lancé sur http://localhost%s\n", port)
+
+	fmt.Printf("Serveur lance sur http://localhost%s\n", port)
 	http.ListenAndServe(port, nil)
 }

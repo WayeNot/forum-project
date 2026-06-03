@@ -8,7 +8,7 @@ import (
 	"github.com/WayeNot/forum-project/internal/handlers"
 )
 
-const port = ":8080"
+const port = ":5500"
 
 func main() {
 	db.Init("forum.db")

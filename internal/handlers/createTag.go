@@ -16,16 +16,17 @@ func CreateTag(w http.ResponseWriter, r *http.Request) {
 	var postData TagData
 
 	session, err := r.Cookie("session_id")
-	if err != nil || session.Value == "" {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+
+	if err != nil {
+		println("Erreur lors de la récupération du cookie de session")
+		println(err.Error())
+		templates.Render("/", w, r)
 		return
 	}
 
-	var userID int
-	const requestUserID = `SELECT user_id FROM sessions WHERE session_id = ? AND is_active = TRUE LIMIT 1`
-	err = db.DB.QueryRow(requestUserID, session.Value).Scan(&userID)
-	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	if session.Value == "" {
+		println("Vous devez être connecté pour créer un tag")
+		templates.Render("/", w, r)
 		return
 	}
 

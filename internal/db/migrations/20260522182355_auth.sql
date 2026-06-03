@@ -1,8 +1,8 @@
 -- +goose Up
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username VARCHAR(55) NOT NULL UNIQUE,
-    mail VARCHAR(55) NOT NULL UNIQUE,
+    username VARCHAR(55) NOT NULL,
+    mail VARCHAR(55) NOT NULL,
     password VARCHAR(55) NOT NULL,
     banner VARCHAR(255),
     pp_url VARCHAR(255),

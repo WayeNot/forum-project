@@ -143,7 +143,7 @@
                                 <i class="fa-solid fa-thumbs-down" aria-hidden="true"></i> {{.dislikes_count}}
                             </a>
                             {{if $.IsLogged}}
-                            <button class="post-tag" onclick="showReplyForm({{.id}})" style="font-size: 0.75rem; padding: 0.15rem 0.5rem; background: none; border: 1px solid var(--border-color); cursor: pointer; color: var(--text-secondary);">
+                            <button class="post-tag" onclick="showReplyForm('{{.id}}')" style="font-size: 0.75rem; padding: 0.15rem 0.5rem; background: none; border: 1px solid var(--border-color); cursor: pointer; color: var(--text-secondary);">
                                 <i class="fa-solid fa-reply" aria-hidden="true"></i> Répondre
                             </button>
                             {{end}}

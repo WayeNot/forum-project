@@ -63,4 +63,5 @@ func createTables() {
 	_, _ = DB.Exec("ALTER TABLE users ADD COLUMN preferred_genres TEXT DEFAULT ''")
 	_, _ = DB.Exec("ALTER TABLE users ADD COLUMN profile_theme TEXT DEFAULT 'default'")
 	_, _ = DB.Exec("ALTER TABLE users ADD COLUMN custom_status TEXT DEFAULT ''")
+	_, _ = DB.Exec("ALTER TABLE comments ADD COLUMN parent_id INTEGER DEFAULT NULL")
 }

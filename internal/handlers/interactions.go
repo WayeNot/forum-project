@@ -99,7 +99,7 @@ func PostDetail(w http.ResponseWriter, r *http.Request) {
 		authorPp = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTNud3o0NzV1eHZkOGl4ZmhmcDJycWNndTNmODcxdDZoMWY3ZTd3aCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GeG3Ulpo8WrwpNMpUz/giphy.gif"
 	}
 
-	const queryComments = `SELECT comments.id, comments.content, comments.created_at, comments.author_id, users.username, users.pp_url FROM comments INNER JOIN users ON comments.author_id = users.id WHERE comments.post_id = ? ORDER BY comments.created_at ASC`
+	const queryComments = `SELECT comments.id, comments.content, comments.created_at, comments.author_id, users.username, users.pp_url, comments.parent_id FROM comments INNER JOIN users ON comments.author_id = users.id WHERE comments.post_id = ? ORDER BY comments.created_at ASC`
 	rows, err := db.DB.Query(queryComments, postID)
 	var comments []map[string]any
 	if err == nil {
@@ -107,7 +107,8 @@ func PostDetail(w http.ResponseWriter, r *http.Request) {
 		for rows.Next() {
 			var cID, cAuthorID int
 			var cContent, cCreatedAt, cUsername, cPp string
-			if err := rows.Scan(&cID, &cContent, &cCreatedAt, &cAuthorID, &cUsername, &cPp); err == nil {
+			var cParentID sql.NullInt64
+			if err := rows.Scan(&cID, &cContent, &cCreatedAt, &cAuthorID, &cUsername, &cPp, &cParentID); err == nil {
 				var cLikesCount int
 				_ = db.DB.QueryRow(`SELECT COUNT(*) FROM comment_likes WHERE comment_id = ? AND vote = 1`, cID).Scan(&cLikesCount)
 
@@ -123,6 +124,11 @@ func PostDetail(w http.ResponseWriter, r *http.Request) {
 					cPp = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTNud3o0NzV1eHZkOGl4ZmhmcDJycWNndTNmODcxdDZoMWY3ZTd3aCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GeG3Ulpo8WrwpNMpUz/giphy.gif"
 				}
 
+				parentIDVal := 0
+				if cParentID.Valid {
+					parentIDVal = int(cParentID.Int64)
+				}
+
 				comments = append(comments, map[string]any{
 					"id":             cID,
 					"content":        cContent,
@@ -133,6 +139,7 @@ func PostDetail(w http.ResponseWriter, r *http.Request) {
 					"likes_count":    cLikesCount,
 					"dislikes_count": cDislikesCount,
 					"user_vote":      cUserVote,
+					"parent_id":      parentIDVal,
 				})
 			}
 		}
@@ -146,6 +153,7 @@ func PostDetail(w http.ResponseWriter, r *http.Request) {
 		"PostID":         postID,
 		"Title":          title,
 		"Description":    description,
+		"ImageURL":       imageURL,
 		"AuthorID":       authorID,
 		"AuthorName":     authorName,
 		"AuthorPp":       authorPp,
@@ -235,8 +243,18 @@ func CommentPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		const insertComment = `INSERT INTO comments (post_id, author_id, content) VALUES (?, ?, ?)`
-		_, err = db.DB.Exec(insertComment, postID, userData.ID, content)
+		parentIDStr := r.FormValue("parent_id")
+		var parentID sql.NullInt64
+		if parentIDStr != "" && parentIDStr != "0" {
+			pID, err := strconv.Atoi(parentIDStr)
+			if err == nil {
+				parentID.Int64 = int64(pID)
+				parentID.Valid = true
+			}
+		}
+
+		const insertComment = `INSERT INTO comments (post_id, author_id, content, parent_id) VALUES (?, ?, ?, ?)`
+		_, err = db.DB.Exec(insertComment, postID, userData.ID, content, parentID)
 		if err != nil {
 			templates.ErrorPage(w, http.StatusInternalServerError, "Impossible de sauvegarder votre commentaire.")
 			return

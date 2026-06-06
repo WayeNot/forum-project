@@ -40,17 +40,17 @@
             <div class="sidebar-section">
                 <h3><i class="fa-solid fa-compass" aria-hidden="true"></i> Navigation</h3>
                 <div class="tag-list" style="display: flex; flex-direction: column; width: 100%; gap: 0.5rem;">
-                    <a href="/" class="tag-item {{if and (eq .Filter \"\") (eq .CurrentTag \"\")}}active{{end}}" style="width: 100%;">
+                    <a href="/" class="tag-item {{if and (eq .Filter "") (eq .CurrentTag "")}}active{{end}}" style="width: 100%;">
                         <i class="fa-solid fa-fire" aria-hidden="true"></i> Récents
                     </a>
-                    <a href="/?filter=popular" class="tag-item {{if eq .Filter \"popular\"}}active{{end}}" style="width: 100%;">
+                    <a href="/?filter=popular" class="tag-item {{if eq .Filter "popular"}}active{{end}}" style="width: 100%;">
                         <i class="fa-solid fa-chart-line" aria-hidden="true"></i> Populaires
                     </a>
                     {{if .IsLogged}}
-                    <a href="/?filter=created" class="tag-item {{if eq .Filter \"created\"}}active{{end}}" style="width: 100%;">
+                    <a href="/?filter=created" class="tag-item {{if eq .Filter "created"}}active{{end}}" style="width: 100%;">
                         <i class="fa-solid fa-user-pen" aria-hidden="true"></i> Créations
                     </a>
-                    <a href="/?filter=liked" class="tag-item {{if eq .Filter \"liked\"}}active{{end}}" style="width: 100%;">
+                    <a href="/?filter=liked" class="tag-item {{if eq .Filter "liked"}}active{{end}}" style="width: 100%;">
                         <i class="fa-solid fa-heart" aria-hidden="true"></i> Likés
                     </a>
                     {{end}}
@@ -67,7 +67,7 @@
             <div class="sidebar-section">
                 <h3><i class="fa-solid fa-hashtag" aria-hidden="true"></i> Catégories</h3>
                 <div class="tag-list" id="tagListContainer">
-                    <a href="/" class="tag-item {{if eq .CurrentTag \"\"}}active{{end}} tag-item-selectable">
+                    <a href="/" class="tag-item {{if eq .CurrentTag ""}}active{{end}} tag-item-selectable">
                         <span class="tag-hash">#</span> tous
                     </a>
                     {{range .Tags}}

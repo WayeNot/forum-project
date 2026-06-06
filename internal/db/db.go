@@ -58,4 +58,9 @@ func createTables() {
 			log.Fatalf("Failed to execute DDL query: %s, error: %s", query, err.Error())
 		}
 	}
+
+	_, _ = DB.Exec("ALTER TABLE users ADD COLUMN favorite_instrument TEXT DEFAULT ''")
+	_, _ = DB.Exec("ALTER TABLE users ADD COLUMN preferred_genres TEXT DEFAULT ''")
+	_, _ = DB.Exec("ALTER TABLE users ADD COLUMN profile_theme TEXT DEFAULT 'default'")
+	_, _ = DB.Exec("ALTER TABLE users ADD COLUMN custom_status TEXT DEFAULT ''")
 }

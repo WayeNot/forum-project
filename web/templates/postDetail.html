@@ -4,33 +4,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{.Title}} - ForumPlus</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=2">
-    <link rel="stylesheet" href="/static/css/home.css?v=2">
+    <meta name="description" content="Découvrez la publication '{{.Title}}' et participez aux commentaires sur SoundPulse.">
+    <title>{{.Title}} - SoundPulse</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=3">
+    <link rel="stylesheet" href="/static/css/home.css?v=3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body>
+{{if .IsLogged}}<body class="theme-{{.UserData.ProfileTheme}}">{{else}}<body class="theme-default">{{end}}
+    <header class="header-navbar">
+        <div class="navbar-container">
+            <a href="/" class="nav-logo" aria-label="SoundPulse Accueil">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2a10 10 0 0 0-10 10v7a3 3 0 0 0 3 3h3v-8H5v-2a7 7 0 1 1 14 0v2h-3v8h3a3 3 0 0 0 3-3v-7A10 10 0 0 0 12 2zm-6 18H5a1 1 0 0 1-1-1v-5h2zm14-1a1 1 0 0 1-1 1h-1v-6h2z"/>
+                </svg>
+                <span>SoundPulse</span>
+            </a>
+            <nav class="nav-links" aria-label="Navigation principale">
+                <a href="/"><i class="fa-solid fa-house" aria-hidden="true"></i> <span>Accueil</span></a>
+                {{if .IsLogged}}
+                <a href="/createPost"><i class="fa-solid fa-plus" aria-hidden="true"></i> <span>Créer</span></a>
+                <a href="/createTag"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> <span>Tag</span></a>
+                <a href="/settings" aria-label="Paramètres du compte"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> <span>Paramètres</span></a>
+                <a href="/logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Déconnexion</span></a>
+                {{else}}
+                <a href="/login" class="login-btn"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Connexion</span></a>
+                {{end}}
+            </nav>
+        </div>
+    </header>
+
     <main class="main-layout">
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <a href="/" class="logo">
-                    <i class="fa-solid fa-music"></i>
-                    <span>ForumPlus</span>
+            <div class="sidebar-section">
+                <a href="/" class="tag-item" style="width: 100%;">
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Accueil
                 </a>
             </div>
             
-            <div class="sidebar-section">
-                <a href="/" class="tag-item">
-                    <i class="fa-solid fa-arrow-left"></i> Retour à l'accueil
-                </a>
-            </div>
-
             {{if .IsLogged}}
             <a href="/user/@{{.UserData.Username}}" style="text-decoration: none; display: block; width: 100%;">
                 <div class="sidebar-user-card">
-                    <img src="{{.UserData.PpURL}}" alt="Photo de profil" class="user-card-avatar">
+                    <img src="{{.UserData.PpURL}}" alt="Photo de profil de {{.UserData.Username}}" class="user-card-avatar">
                     <div class="user-card-info">
                         <span class="user-card-name">{{.UserData.Username}}</span>
                         <span class="user-card-email">{{.UserData.Mail}}</span>
@@ -41,48 +57,33 @@
         </aside>
 
         <div class="content-area">
-            <nav class="navbar">
-                <a href="/" class="nav-brand-mobile"><i class="fa-solid fa-music"></i></a>
-                <div class="nav-links">
-                    <a href="/"><i class="fa-solid fa-house"></i> <span>Accueil</span></a>
-                    {{if .IsLogged}}
-                    <a href="/createPost"><i class="fa-solid fa-circle-plus"></i> <span>Créer</span></a>
-                    <a href="/createTag"><i class="fa-solid fa-tag"></i> <span>Créer Tag</span></a>
-                    <a href="/settings" class="settings-btn" title="Paramètres"><i class="fa-solid fa-user-gear"></i> <span>Paramètres</span></a>
-                    <a href="/logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> <span>Déconnexion</span></a>
-                    {{else}}
-                    <a href="/login" class="login-btn"><i class="fa-solid fa-right-from-bracket"></i> <span>Connexion</span></a>
-                    {{end}}
-                </div>
-            </nav>
-
             <article class="post-card" style="margin-bottom: 2rem;">
                 <header class="post-card-header">
-                    <a href="/user/@{{.AuthorName}}" style="text-decoration: none; color: inherit;">
+                    <a href="/user/@{{.AuthorName}}" style="text-decoration: none; color: inherit;" aria-label="Profil de {{.AuthorName}}">
                         <div class="author-info">
-                            <img src="{{.AuthorPp}}" alt="Photo de profil" class="auth-pp">
+                            <img src="{{.AuthorPp}}" alt="Photo de profil de {{.AuthorName}}" class="auth-pp">
                             <div class="author-meta">
                                 <span class="author-name">{{.AuthorName}}</span>
-                                <span class="post-card-ago"><i class="fa-regular fa-clock"></i> Publié le {{.CreatedAt}}</span>
+                                <span class="post-card-ago"><i class="fa-regular fa-clock" aria-hidden="true"></i> Publié le {{.CreatedAt}}</span>
                             </div>
                         </div>
                     </a>
                     
                     {{if .IsAuthor}}
                     <div style="display: flex; gap: 0.5rem;">
-                        <a href="/post/edit?id={{.PostID}}" class="post-tag" style="background: rgba(99, 102, 241, 0.2); border-color: rgba(99, 102, 241, 0.4); color: var(--text-primary);"><i class="fa-solid fa-pen-to-square"></i> Modifier</a>
-                        <a href="/post/delete?id={{.PostID}}" class="post-tag" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4); color: #ef4444;" onclick="return confirm('Confirmer la suppression de ce post ?')"><i class="fa-solid fa-trash"></i> Supprimer</a>
+                        <a href="/post/edit?id={{.PostID}}" class="post-tag" style="background: rgba(6, 182, 212, 0.2); border-color: rgba(6, 182, 212, 0.4); color: var(--text-primary);"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Modifier</a>
+                        <a href="/post/delete?id={{.PostID}}" class="post-tag" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4); color: #ef4444;" onclick="return confirm('Confirmer la suppression de ce post ?')"><i class="fa-solid fa-trash" aria-hidden="true"></i> Supprimer</a>
                     </div>
                     {{end}}
                 </header>
 
                 <div class="post-card-content">
-                    <h3 class="post-card-title">{{.Title}}</h3>
+                    <h1 class="post-card-title">{{.Title}}</h1>
                     <p class="post-card-description">{{.Description}}</p>
 
                     {{if .ImageURL}}
                     <div class="post-card-image-wrapper">
-                        <img src="{{.ImageURL}}" alt="Image du post" class="post-card-image">
+                        <img src="{{.ImageURL}}" alt="Illustration pour {{.Title}}" class="post-card-image">
                     </div>
                     {{end}}
 
@@ -96,23 +97,23 @@
                 </div>
 
                 <div style="display: flex; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem;">
-                    <a href="/post/like?id={{.PostID}}" class="post-tag {{if eq .UserVote 1}}active{{end}}" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
-                        <i class="fa-solid fa-thumbs-up"></i> {{.LikesCount}}
+                    <a href="/post/like?id={{.PostID}}" class="post-tag {{if eq .UserVote 1}}active{{end}}" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;" aria-label="Aimer ce post, {{.LikesCount}} j'aime">
+                        <i class="fa-solid fa-thumbs-up" aria-hidden="true"></i> {{.LikesCount}}
                     </a>
-                    <a href="/post/dislike?id={{.PostID}}" class="post-tag {{if eq .UserVote -1}}active{{end}}" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: #ef4444;">
-                        <i class="fa-solid fa-thumbs-down"></i> {{.DislikesCount}}
+                    <a href="/post/dislike?id={{.PostID}}" class="post-tag {{if eq .UserVote -1}}active{{end}}" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: #ef4444;" aria-label="Ne pas aimer ce post, {{.DislikesCount}} j'aime pas">
+                        <i class="fa-solid fa-thumbs-down" aria-hidden="true"></i> {{.DislikesCount}}
                     </a>
                 </div>
             </article>
 
             <section style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.75rem; backdrop-filter: blur(12px);">
-                <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem;"><i class="fa-solid fa-comments"></i> Commentaires ({{len .Comments}})</h3>
+                <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem;"><i class="fa-solid fa-comments" aria-hidden="true"></i> Commentaires ({{len .Comments}})</h2>
 
                 {{if .IsLogged}}
                 <form action="/post/comment" method="post" style="margin-bottom: 2rem; display: flex; flex-direction: column; gap: 1rem;">
                     <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                     <input type="hidden" name="post_id" value="{{.PostID}}">
-                    <textarea name="content" required placeholder="Ajouter un commentaire constructif..." style="width: 100%; height: 5rem; padding: 0.75rem 1rem; border: 1px solid var(--border-color); background: rgba(255, 255, 255, 0.03); color: var(--text-primary); outline: none; border-radius: var(--radius-md); font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
+                    <textarea name="content" required placeholder="Ajouter un commentaire..." aria-label="Contenu du commentaire" style="width: 100%; height: 5rem; padding: 0.75rem 1rem; border: 1px solid var(--border-color); background: rgba(255, 255, 255, 0.03); color: var(--text-primary); outline: none; border-radius: var(--radius-md); font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
                     <button type="submit" class="login-btn" style="border: none; padding: 0.625rem 1.25rem; border-radius: var(--radius-md); font-family: 'Outfit', sans-serif; font-weight: 700; cursor: pointer; align-self: flex-end;">Commenter</button>
                 </form>
                 {{else}}
@@ -125,27 +126,27 @@
                     {{range .Comments}}
                     <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <a href="/user/@{{.author_name}}" style="text-decoration: none; color: inherit;">
+                            <a href="/user/@{{.author_name}}" style="text-decoration: none; color: inherit;" aria-label="Profil de {{.author_name}}">
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <img src="{{.author_pp}}" alt="Profil" style="width: 28px; height: 28px; border-radius: var(--radius-sm); object-fit: cover;">
+                                    <img src="{{.author_pp}}" alt="Profil de {{.author_name}}" style="width: 28px; height: 28px; border-radius: var(--radius-sm); object-fit: cover;">
                                     <span style="font-weight: 600; font-size: 0.9rem; color: var(--text-primary);">{{.author_name}}</span>
-                                    <span style="font-size: 0.75rem; color: var(--text-muted);"><i class="fa-regular fa-clock"></i> {{.created_at}}</span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);"><i class="fa-regular fa-clock" aria-hidden="true"></i> {{.created_at}}</span>
                                 </div>
                             </a>
                         </div>
                         <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 0.5rem; white-space: pre-wrap; word-break: break-word;">{{.content}}</p>
                         
                         <div style="display: flex; gap: 0.5rem; align-items: center;">
-                            <a href="/comment/like?id={{.id}}" class="post-tag {{if eq .user_vote 1}}active{{end}}" style="font-size: 0.75rem; padding: 0.15rem 0.5rem;">
-                                <i class="fa-solid fa-thumbs-up"></i> {{.likes_count}}
+                            <a href="/comment/like?id={{.id}}" class="post-tag {{if eq .user_vote 1}}active{{end}}" style="font-size: 0.75rem; padding: 0.15rem 0.5rem;" aria-label="Aimer ce commentaire, {{.likes_count}} j'aime">
+                                <i class="fa-solid fa-thumbs-up" aria-hidden="true"></i> {{.likes_count}}
                             </a>
-                            <a href="/comment/dislike?id={{.id}}" class="post-tag {{if eq .user_vote -1}}active{{end}}" style="font-size: 0.75rem; padding: 0.15rem 0.5rem; color: #ef4444;">
-                                <i class="fa-solid fa-thumbs-down"></i> {{.dislikes_count}}
+                            <a href="/comment/dislike?id={{.id}}" class="post-tag {{if eq .user_vote -1}}active{{end}}" style="font-size: 0.75rem; padding: 0.15rem 0.5rem; color: #ef4444;" aria-label="Ne pas aimer ce commentaire, {{.dislikes_count}} j'aime pas">
+                                <i class="fa-solid fa-thumbs-down" aria-hidden="true"></i> {{.dislikes_count}}
                             </a>
                         </div>
                     </div>
                     {{else}}
-                    <p style="text-align: center; color: var(--text-muted); font-size: 0.95rem; padding: 1rem;">Aucun commentaire pour le moment. Soyez le premier à commenter !</p>
+                    <p style="text-align: center; color: var(--text-muted); font-size: 0.95rem; padding: 1rem;">Aucun commentaire pour le moment.</p>
                     {{end}}
                 </div>
             </section>

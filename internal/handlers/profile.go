@@ -7,6 +7,7 @@ import (
 
 	"github.com/WayeNot/forum-project/internal/db"
 	"github.com/WayeNot/forum-project/internal/templates"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func UserProfile(w http.ResponseWriter, r *http.Request) {
@@ -23,8 +24,8 @@ func UserProfile(w http.ResponseWriter, r *http.Request) {
 	username := strings.TrimPrefix(usernamePrefixed, "@")
 
 	var targetUser UserData
-	const queryUser = `SELECT id, username, mail, banner, pp_url, bio FROM users WHERE username = ?`
-	err := db.DB.QueryRow(queryUser, username).Scan(&targetUser.ID, &targetUser.Username, &targetUser.Mail, &targetUser.Banner, &targetUser.PpURL, &targetUser.Bio)
+	const queryUser = `SELECT id, username, mail, banner, pp_url, bio, favorite_instrument, preferred_genres, profile_theme, custom_status FROM users WHERE username = ?`
+	err := db.DB.QueryRow(queryUser, username).Scan(&targetUser.ID, &targetUser.Username, &targetUser.Mail, &targetUser.Banner, &targetUser.PpURL, &targetUser.Bio, &targetUser.FavoriteInstrument, &targetUser.PreferredGenres, &targetUser.ProfileTheme, &targetUser.CustomStatus)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			templates.ErrorPage(w, http.StatusNotFound, "Profil introuvable.")
@@ -121,22 +122,115 @@ func UserSettings(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		err := r.ParseForm()
+		if err != nil {
+			templates.Render("auth/settings", w, map[string]any{"Error": "Données de formulaire invalides.", "IsLogged": isLogged, "UserData": loggedUser, "CSRFToken": csrfToken})
+			return
+		}
+
+		action := r.FormValue("action")
+		if action == "delete" {
+			_, err1 := db.DB.Exec("DELETE FROM sessions WHERE user_id = ?", loggedUser.ID)
+			_, err2 := db.DB.Exec("DELETE FROM users WHERE id = ?", loggedUser.ID)
+			if err1 != nil || err2 != nil {
+				templates.ErrorPage(w, http.StatusInternalServerError, "Erreur lors de la suppression du compte.")
+				return
+			}
+			cookie := &http.Cookie{
+				Name:     "session_id",
+				Value:    "",
+				MaxAge:   -1,
+				Path:     "/",
+				HttpOnly: true,
+				Secure:   true,
+				SameSite: http.SameSiteLaxMode,
+			}
+			http.SetCookie(w, cookie)
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+
+		username := strings.TrimSpace(r.FormValue("username"))
+		mail := strings.TrimSpace(r.FormValue("mail"))
 		bio := strings.TrimSpace(r.FormValue("bio"))
 		banner := strings.TrimSpace(r.FormValue("banner"))
 		ppURL := strings.TrimSpace(r.FormValue("pp_url"))
+		customStatus := strings.TrimSpace(r.FormValue("custom_status"))
+		favoriteInstrument := strings.TrimSpace(r.FormValue("favorite_instrument"))
+		profileTheme := strings.TrimSpace(r.FormValue("profile_theme"))
+
+		preferredGenresList := r.Form["preferred_genres"]
+		preferredGenres := strings.Join(preferredGenresList, ",")
+
+		if username == "" || mail == "" {
+			templates.Render("auth/settings", w, map[string]any{"Error": "Le nom d'utilisateur et l'email sont obligatoires.", "IsLogged": isLogged, "UserData": loggedUser, "CSRFToken": csrfToken})
+			return
+		}
+
+		if username != loggedUser.Username {
+			var exists int
+			db.DB.QueryRow("SELECT COUNT(*) FROM users WHERE username = ? AND id != ?", username, loggedUser.ID).Scan(&exists)
+			if exists > 0 {
+				templates.Render("auth/settings", w, map[string]any{"Error": "Ce nom d'utilisateur est déjà utilisé.", "IsLogged": isLogged, "UserData": loggedUser, "CSRFToken": csrfToken})
+				return
+			}
+		}
+
+		if mail != loggedUser.Mail {
+			var exists int
+			db.DB.QueryRow("SELECT COUNT(*) FROM users WHERE mail = ? AND id != ?", mail, loggedUser.ID).Scan(&exists)
+			if exists > 0 {
+				templates.Render("auth/settings", w, map[string]any{"Error": "Cette adresse email est déjà utilisée.", "IsLogged": isLogged, "UserData": loggedUser, "CSRFToken": csrfToken})
+				return
+			}
+		}
+
+		currentPassword := r.FormValue("current_password")
+		newPassword := r.FormValue("new_password")
+		if currentPassword != "" || newPassword != "" {
+			if currentPassword == "" || newPassword == "" {
+				templates.Render("auth/settings", w, map[string]any{"Error": "Veuillez saisir le mot de passe actuel et le nouveau mot de passe pour le modifier.", "IsLogged": isLogged, "UserData": loggedUser, "CSRFToken": csrfToken})
+				return
+			}
+
+			var passwordDB string
+			err = db.DB.QueryRow("SELECT password FROM users WHERE id = ?", loggedUser.ID).Scan(&passwordDB)
+			if err != nil {
+				templates.Render("auth/settings", w, map[string]any{"Error": "Erreur de base de données.", "IsLogged": isLogged, "UserData": loggedUser, "CSRFToken": csrfToken})
+				return
+			}
+
+			err = bcrypt.CompareHashAndPassword([]byte(passwordDB), []byte(currentPassword))
+			if err != nil {
+				templates.Render("auth/settings", w, map[string]any{"Error": "Le mot de passe actuel est incorrect.", "IsLogged": isLogged, "UserData": loggedUser, "CSRFToken": csrfToken})
+				return
+			}
+
+			hashed, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+			if err != nil {
+				templates.Render("auth/settings", w, map[string]any{"Error": "Erreur lors du chiffrement du mot de passe.", "IsLogged": isLogged, "UserData": loggedUser, "CSRFToken": csrfToken})
+				return
+			}
+
+			_, err = db.DB.Exec("UPDATE users SET password = ? WHERE id = ?", string(hashed), loggedUser.ID)
+			if err != nil {
+				templates.Render("auth/settings", w, map[string]any{"Error": "Impossible de mettre à jour le mot de passe.", "IsLogged": isLogged, "UserData": loggedUser, "CSRFToken": csrfToken})
+				return
+			}
+		}
 
 		if ppURL == "" {
 			ppURL = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTNud3o0NzV1eHZkOGl4ZmhmcDJycWNndTNmODcxdDZoMWY3ZTd3aCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GeG3Ulpo8WrwpNMpUz/giphy.gif"
 		}
 
-		const updateUser = `UPDATE users SET bio = ?, banner = ?, pp_url = ? WHERE id = ?`
-		_, err := db.DB.Exec(updateUser, bio, banner, ppURL, loggedUser.ID)
+		const updateUser = `UPDATE users SET username = ?, mail = ?, bio = ?, banner = ?, pp_url = ?, favorite_instrument = ?, preferred_genres = ?, profile_theme = ?, custom_status = ? WHERE id = ?`
+		_, err = db.DB.Exec(updateUser, username, mail, bio, banner, ppURL, favoriteInstrument, preferredGenres, profileTheme, customStatus, loggedUser.ID)
 		if err != nil {
 			templates.ErrorPage(w, http.StatusInternalServerError, "Impossible de sauvegarder vos paramètres.")
 			return
 		}
 
-		http.Redirect(w, r, "/user/@"+loggedUser.Username, http.StatusSeeOther)
+		http.Redirect(w, r, "/user/@"+username, http.StatusSeeOther)
 		return
 	}
 

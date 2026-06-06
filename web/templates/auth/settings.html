@@ -4,84 +4,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paramètres - ForumPlus</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=2">
-    <link rel="stylesheet" href="/static/css/home.css?v=2">
-    <link rel="stylesheet" href="/static/css/creator.css?v=2">
+    <meta name="description" content="Modifiez vos paramètres, photo de profil, genres musicaux favoris et mot de passe sur SoundPulse.">
+    <title>Paramètres - SoundPulse</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=3">
+    <link rel="stylesheet" href="/static/css/home.css?v=3">
+    <link rel="stylesheet" href="/static/css/creator.css?v=3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body>
+{{if .IsLogged}}<body class="theme-{{.UserData.ProfileTheme}}">{{else}}<body class="theme-default">{{end}}
+    <header class="header-navbar">
+        <div class="navbar-container">
+            <a href="/" class="nav-logo" aria-label="SoundPulse Accueil">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2a10 10 0 0 0-10 10v7a3 3 0 0 0 3 3h3v-8H5v-2a7 7 0 1 1 14 0v2h-3v8h3a3 3 0 0 0 3-3v-7A10 10 0 0 0 12 2zm-6 18H5a1 1 0 0 1-1-1v-5h2zm14-1a1 1 0 0 1-1 1h-1v-6h2z"/>
+                </svg>
+                <span>SoundPulse</span>
+            </a>
+            <nav class="nav-links" aria-label="Navigation principale">
+                <a href="/"><i class="fa-solid fa-house" aria-hidden="true"></i> <span>Accueil</span></a>
+                {{if .IsLogged}}
+                <a href="/createPost"><i class="fa-solid fa-plus" aria-hidden="true"></i> <span>Créer</span></a>
+                <a href="/createTag"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> <span>Tag</span></a>
+                <a href="/user/@{{.UserData.Username}}"><i class="fa-solid fa-user" aria-hidden="true"></i> <span>Mon Profil</span></a>
+                <a href="/logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Déconnexion</span></a>
+                {{end}}
+            </nav>
+        </div>
+    </header>
+
     <main class="main-layout">
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <a href="/" class="logo">
-                    <i class="fa-solid fa-music"></i>
-                    <span>ForumPlus</span>
-                </a>
-            </div>
-            
             <div class="sidebar-section">
-                <a href="/" class="tag-item">
-                    <i class="fa-solid fa-arrow-left"></i> Retour à l'accueil
+                <a href="/user/@{{.UserData.Username}}" class="tag-item" style="width: 100%;">
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Retour au profil
                 </a>
             </div>
-
-            {{if .IsLogged}}
-            <div class="sidebar-user-card">
-                <img src="{{.UserData.PpURL}}" alt="Photo de profil" class="user-card-avatar">
-                <div class="user-card-info">
-                    <span class="user-card-name">{{.UserData.Username}}</span>
-                    <span class="user-card-email">{{.UserData.Mail}}</span>
-                </div>
-            </div>
-            {{end}}
         </aside>
 
         <div class="content-area">
-            <nav class="navbar">
-                <a href="/" class="nav-brand-mobile"><i class="fa-solid fa-music"></i></a>
-                <div class="nav-links">
-                    <a href="/"><i class="fa-solid fa-house"></i> <span>Accueil</span></a>
-                </div>
-            </nav>
-
             <section class="form-container">
-                <h2 class="form-title">Paramètres du profil</h2>
-                <p class="form-subtitle">Personnalisez votre identité sur le forum musical.</p>
+                <h1 class="form-title">Paramètres du compte</h1>
+                <p class="form-subtitle">Personnalisez votre expérience et votre identité musicale.</p>
 
                 {{if .Error}}
                 <div class="form-error">
-                    <i class="fa-solid fa-triangle-exclamation"></i> {{.Error}}
+                    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> {{.Error}}
                 </div>
                 {{end}}
 
-                <form id="settingsForm" action="/settings" method="post">
+                <form id="settingsForm" action="/settings" method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                    <input type="hidden" name="action" value="update">
                     
                     <div class="form-group">
-                        <label for="pp_url">URL de l'image de profil (Avatar)</label>
-                        <input class="inputText" id="pp_url" name="pp_url" value="{{.UserData.PpURL}}" placeholder="URL de l'avatar" type="text" />
+                        <label for="username">Nom d'utilisateur</label>
+                        <input class="inputText" id="username" name="username" value="{{.UserData.Username}}" required type="text" />
                     </div>
 
                     <div class="form-group">
-                        <label for="banner">URL de l'image de bannière</label>
-                        <input class="inputText" id="banner" name="banner" value="{{.UserData.Banner}}" placeholder="URL de la bannière" type="text" />
+                        <label for="mail">Adresse email</label>
+                        <input class="inputText" id="mail" name="mail" value="{{.UserData.Mail}}" required type="email" />
                     </div>
-                    
+
+                    <div class="form-group">
+                        <label for="pp_url">Lien photo de profil (Avatar)</label>
+                        <input class="inputText" id="pp_url" name="pp_url" value="{{.UserData.PpURL}}" type="text" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="banner">Lien bannière de profil</label>
+                        <input class="inputText" id="banner" name="banner" value="{{.UserData.Banner}}" type="text" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="custom_status">Statut musical (ex: En écoute de Daft Punk)</label>
+                        <input class="inputText" id="custom_status" name="custom_status" value="{{.UserData.CustomStatus}}" placeholder="🎧 Votre statut du moment" type="text" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="favInstrumentSelect">Instrument favori</label>
+                        <select name="favorite_instrument" id="favInstrumentSelect" class="inputSelect" data-selected="{{.UserData.FavoriteInstrument}}">
+                            <option value="">-- Aucun --</option>
+                            <option value="Guitare">Guitare</option>
+                            <option value="Piano">Piano</option>
+                            <option value="Batterie">Batterie</option>
+                            <option value="Synthétiseur">Synthétiseur</option>
+                            <option value="Chant">Chant</option>
+                            <option value="Basse">Basse</option>
+                            <option value="Violon">Violon</option>
+                            <option value="Saxophone">Saxophone</option>
+                            <option value="Flûte">Flûte</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profileThemeSelect">Thème visuel de profil</label>
+                        <select name="profile_theme" id="profileThemeSelect" class="inputSelect" data-selected="{{.UserData.ProfileTheme}}">
+                            <option value="default">Violet Néon (Défaut)</option>
+                            <option value="sunset">Sunset Orange</option>
+                            <option value="electro">Electro Lime</option>
+                            <option value="cyberpunk">Cyberpunk Yellow</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Genres musicaux préférés</label>
+                        <div id="genresCheckboxGroup" data-selected="{{.UserData.PreferredGenres}}" class="checkbox-grid">
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Rock"> Rock</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Pop"> Pop</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Metal"> Metal</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Electro"> Electro</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Hip-Hop"> Hip-Hop</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Jazz"> Jazz</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Classique"> Classique</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Blues"> Blues</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Reggae"> Reggae</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Funk"> Funk</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Rap"> Rap</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Acoustique"> Acoustique</label>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label for="bio">Biographie / Description</label>
-                        <textarea name="bio" id="bio" class="textarea" placeholder="Partagez vos goûts musicaux, instruments joués, groupes favoris...">{{.UserData.Bio}}</textarea>
+                        <textarea name="bio" id="bio" class="textarea" placeholder="Partagez vos artistes ou projets musicaux du moment...">{{.UserData.Bio}}</textarea>
+                    </div>
+
+                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+
+                    <h2 class="form-title" style="font-size: 1.25rem;">Changer le mot de passe</h2>
+                    <p class="form-subtitle" style="font-size: 0.85rem; margin-bottom: 1rem;">Laissez vide si vous ne souhaitez pas modifier le mot de passe.</p>
+
+                    <div class="form-group">
+                        <label for="current_password">Mot de passe actuel</label>
+                        <input class="inputText" id="current_password" name="current_password" type="password" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new_password">Nouveau mot de passe</label>
+                        <input class="inputText" id="new_password" name="new_password" type="password" />
                     </div>
 
                     <button type="submit" class="btn-submit-creator">
-                        <i class="fa-solid fa-floppy-disk"></i> Enregistrer les paramètres
+                        <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Enregistrer les paramètres
                     </button>
                 </form>
+
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 2rem 0;">
+
+                <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: var(--radius-md); padding: 1.5rem;">
+                    <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ef4444; margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> Zone de danger</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">La suppression de votre compte effacera l'intégralité de vos données de manière définitive. Cette action ne peut pas être annulée.</p>
+                    <form action="/settings" method="post" onsubmit="return confirm('Êtes-vous absolument sûr de vouloir supprimer votre compte ? Cette action est définitive et irréversible.')">
+                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                        <input type="hidden" name="action" value="delete">
+                        <button type="submit" class="btn-submit-creator btn-danger" style="width: auto;">
+                            <i class="fa-solid fa-trash" aria-hidden="true"></i> Supprimer définitivement mon compte
+                        </button>
+                    </form>
+                </div>
             </section>
         </div>
     </main>
+
+    <script>
+        const group = document.getElementById('genresCheckboxGroup');
+        const selected = group.getAttribute('data-selected');
+        if (selected) {
+            const list = selected.split(',');
+            const checkboxes = group.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                if (list.includes(cb.value)) {
+                    cb.checked = true;
+                }
+            });
+        }
+
+        const selectInst = document.getElementById('favInstrumentSelect');
+        const selectedInst = selectInst.getAttribute('data-selected');
+        if (selectedInst) {
+            selectInst.value = selectedInst;
+        }
+
+        const selectTheme = document.getElementById('profileThemeSelect');
+        const selectedTheme = selectTheme.getAttribute('data-selected');
+        if (selectedTheme) {
+            selectTheme.value = selectedTheme;
+        }
+    </script>
 </body>
 
 </html>

@@ -24,8 +24,8 @@ func getLoggedUser(r *http.Request) (UserData, bool) {
 		return userData, false
 	}
 
-	const requestUser = `SELECT id, username, mail, banner, pp_url, bio FROM users WHERE id = ?`
-	err = db.DB.QueryRow(requestUser, user_id).Scan(&userData.ID, &userData.Username, &userData.Mail, &userData.Banner, &userData.PpURL, &userData.Bio)
+	const requestUser = `SELECT id, username, mail, banner, pp_url, bio, favorite_instrument, preferred_genres, profile_theme, custom_status FROM users WHERE id = ?`
+	err = db.DB.QueryRow(requestUser, user_id).Scan(&userData.ID, &userData.Username, &userData.Mail, &userData.Banner, &userData.PpURL, &userData.Bio, &userData.FavoriteInstrument, &userData.PreferredGenres, &userData.ProfileTheme, &userData.CustomStatus)
 	if err != nil {
 		return userData, false
 	}

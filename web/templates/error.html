@@ -4,30 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Erreur {{.StatusCode}} - ForumPlus</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=2">
-    <link rel="stylesheet" href="/static/css/auth.css?v=2">
+    <meta name="description" content="Erreur sur le site SoundPulse.">
+    <title>Erreur {{.StatusCode}} - SoundPulse</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=3">
+    <link rel="stylesheet" href="/static/css/auth.css?v=3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body>
+<body class="theme-default">
     <div class="auth-wrapper">
-        <div class="authForm" style="text-align: center;">
-            <div style="font-size: 4rem; background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.5rem;">
-                <i class="fa-solid fa-compact-disc fa-spin" style="animation-duration: 4s;"></i>
+        <main class="authForm" style="text-align: center;">
+            <div style="font-size: 4rem; background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.5rem; display: flex; justify-content: center; align-items: center;">
+                <svg viewBox="0 0 24 24" aria-hidden="true" width="64" height="64" style="fill: var(--accent-color); animation: spin 4s linear infinite;">
+                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm1-13h-2v6h2zm0 8h-2v2h2z"/>
+                </svg>
             </div>
             
-            <h2 class="login-title" style="font-size: 2.5rem; margin-bottom: 1rem;">Erreur {{.StatusCode}}</h2>
+            <h1 class="login-title" style="font-size: 2.5rem; margin-bottom: 1rem;">Erreur {{.StatusCode}}</h1>
             <p class="auth-subtitle" style="font-size: 1.1rem; line-height: 1.6;">{{.Message}}</p>
             
             <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
                 <a href="/" class="btn-submit" style="text-decoration: none;">
-                    <i class="fa-solid fa-house"></i> Retour à l'accueil
+                    <i class="fa-solid fa-house" aria-hidden="true"></i> Retour à l'accueil
                 </a>
             </div>
-        </div>
+        </main>
     </div>
+    <style>
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </body>
 
 </html>

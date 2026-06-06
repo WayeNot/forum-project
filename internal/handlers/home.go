@@ -10,12 +10,16 @@ import (
 )
 
 type UserData struct {
-	ID       int
-	Username string
-	Mail     string
-	Banner   string
-	PpURL    string
-	Bio      string
+	ID                 int
+	Username           string
+	Mail               string
+	Banner             string
+	PpURL              string
+	Bio                string
+	FavoriteInstrument string
+	PreferredGenres    string
+	ProfileTheme       string
+	CustomStatus       string
 }
 
 func getAllTags() []string {
@@ -55,8 +59,8 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		err = db.DB.QueryRow(requestUserId, cleanSessionValue).Scan(&user_id)
 
 		if err == nil {
-			const requestUser = `SELECT id, username, mail, banner, pp_url, bio FROM users WHERE id = ?`
-			err = db.DB.QueryRow(requestUser, user_id).Scan(&userData.ID, &userData.Username, &userData.Mail, &userData.Banner, &userData.PpURL, &userData.Bio)
+			const requestUser = `SELECT id, username, mail, banner, pp_url, bio, favorite_instrument, preferred_genres, profile_theme, custom_status FROM users WHERE id = ?`
+			err = db.DB.QueryRow(requestUser, user_id).Scan(&userData.ID, &userData.Username, &userData.Mail, &userData.Banner, &userData.PpURL, &userData.Bio, &userData.FavoriteInstrument, &userData.PreferredGenres, &userData.ProfileTheme, &userData.CustomStatus)
 			if err == nil {
 				isLogged = true
 			}
@@ -71,7 +75,12 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 	tagFilter := strings.TrimSpace(r.URL.Query().Get("tag"))
 
-	const postsQuery = `SELECT posts.id, posts.title, posts.description, posts.author_id, posts.image_url, posts.tags, posts.created_at, users.username FROM posts INNER JOIN users ON posts.author_id = users.id ORDER BY posts.created_at DESC`
+	var postsQuery string
+	if filter == "popular" {
+		postsQuery = `SELECT posts.id, posts.title, posts.description, posts.author_id, posts.image_url, posts.tags, posts.created_at, users.username FROM posts INNER JOIN users ON posts.author_id = users.id ORDER BY (SELECT COUNT(*) FROM post_likes WHERE post_likes.post_id = posts.id AND post_likes.vote = 1) DESC, posts.created_at DESC`
+	} else {
+		postsQuery = `SELECT posts.id, posts.title, posts.description, posts.author_id, posts.image_url, posts.tags, posts.created_at, users.username FROM posts INNER JOIN users ON posts.author_id = users.id ORDER BY posts.created_at DESC`
+	}
 	rows, err := db.DB.Query(postsQuery)
 	if err != nil {
 		println(err.Error())

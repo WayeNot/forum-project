@@ -69,8 +69,8 @@
 
 .form-input:focus {
     border-color: var(--accent-color);
-    background: rgba(99, 102, 241, 0.05);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    background: rgba(6, 182, 212, 0.05);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
 }
 
 .btn-submit {
@@ -89,14 +89,14 @@
     font-weight: 700;
     border-radius: var(--radius-md);
     transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+    box-shadow: var(--shadow-md);
     margin-top: 0.5rem;
 }
 
 .btn-submit:hover {
     opacity: 0.95;
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 6px 16px rgba(6, 182, 212, 0.35);
 }
 
 .form-links {

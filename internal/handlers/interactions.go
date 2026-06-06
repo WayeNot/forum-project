@@ -36,13 +36,13 @@ func getLoggedUser(r *http.Request) (UserData, bool) {
 func PostDetail(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 3 {
-		http.NotFound(w, r)
+		templates.ErrorPage(w, http.StatusNotFound, "Post introuvable.")
 		return
 	}
 	idStr := parts[2]
 	postID, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.NotFound(w, r)
+		templates.ErrorPage(w, http.StatusNotFound, "Identifiant du post invalide.")
 		return
 	}
 
@@ -60,9 +60,9 @@ func PostDetail(w http.ResponseWriter, r *http.Request) {
 	err = db.DB.QueryRow(queryPost, postID).Scan(&title, &description, &authorID, &imageURL, &tagsStr, &createdAt, &authorName)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			http.NotFound(w, r)
+			templates.ErrorPage(w, http.StatusNotFound, "Post introuvable.")
 		} else {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			templates.ErrorPage(w, http.StatusInternalServerError, "Erreur lors de la récupération du post.")
 		}
 		return
 	}
@@ -218,7 +218,7 @@ func CommentPost(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		if !VerifyCSRFToken(r) {
-			http.Error(w, "Invalid CSRF Token", http.StatusForbidden)
+			templates.ErrorPage(w, http.StatusForbidden, "CSRF invalide.")
 			return
 		}
 
@@ -238,7 +238,7 @@ func CommentPost(w http.ResponseWriter, r *http.Request) {
 		const insertComment = `INSERT INTO comments (post_id, author_id, content) VALUES (?, ?, ?)`
 		_, err = db.DB.Exec(insertComment, postID, userData.ID, content)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			templates.ErrorPage(w, http.StatusInternalServerError, "Impossible de sauvegarder votre commentaire.")
 			return
 		}
 
@@ -305,7 +305,7 @@ func EditPost(w http.ResponseWriter, r *http.Request) {
 	postIDStr := r.URL.Query().Get("id")
 	postID, err := strconv.Atoi(postIDStr)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		templates.ErrorPage(w, http.StatusNotFound, "Post introuvable.")
 		return
 	}
 
@@ -314,12 +314,12 @@ func EditPost(w http.ResponseWriter, r *http.Request) {
 	const queryPost = `SELECT title, description, author_id, image_url, tags FROM posts WHERE id = ?`
 	err = db.DB.QueryRow(queryPost, postID).Scan(&title, &description, &authorID, &imageURL, &tagsStr)
 	if err != nil {
-		http.NotFound(w, r)
+		templates.ErrorPage(w, http.StatusNotFound, "Post introuvable.")
 		return
 	}
 
 	if authorID != userData.ID {
-		http.Error(w, "Forbidden", http.StatusForbidden)
+		templates.ErrorPage(w, http.StatusForbidden, "Vous n'avez pas l'autorisation de modifier ce post.")
 		return
 	}
 
@@ -327,7 +327,7 @@ func EditPost(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		if !VerifyCSRFToken(r) {
-			http.Error(w, "Invalid CSRF Token", http.StatusForbidden)
+			templates.ErrorPage(w, http.StatusForbidden, "CSRF invalide.")
 			return
 		}
 
@@ -353,7 +353,7 @@ func EditPost(w http.ResponseWriter, r *http.Request) {
 		const updatePost = `UPDATE posts SET title = ?, description = ?, image_url = ?, tags = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`
 		_, err = db.DB.Exec(updatePost, title, description, imageURL, tagsStr, postID)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			templates.ErrorPage(w, http.StatusInternalServerError, "Erreur serveur.")
 			return
 		}
 
@@ -383,7 +383,7 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 	postIDStr := r.URL.Query().Get("id")
 	postID, err := strconv.Atoi(postIDStr)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		templates.ErrorPage(w, http.StatusNotFound, "Post introuvable.")
 		return
 	}
 
@@ -391,12 +391,12 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 	const queryAuthor = `SELECT author_id FROM posts WHERE id = ?`
 	err = db.DB.QueryRow(queryAuthor, postID).Scan(&authorID)
 	if err != nil {
-		http.NotFound(w, r)
+		templates.ErrorPage(w, http.StatusNotFound, "Post introuvable.")
 		return
 	}
 
 	if authorID != userData.ID {
-		http.Error(w, "Forbidden", http.StatusForbidden)
+		templates.ErrorPage(w, http.StatusForbidden, "Vous n'avez pas l'autorisation de supprimer ce post.")
 		return
 	}
 

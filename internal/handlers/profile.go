@@ -12,12 +12,12 @@ import (
 func UserProfile(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 3 {
-		http.NotFound(w, r)
+		templates.ErrorPage(w, http.StatusNotFound, "Page non trouvée.")
 		return
 	}
 	usernamePrefixed := parts[2]
 	if !strings.HasPrefix(usernamePrefixed, "@") {
-		http.NotFound(w, r)
+		templates.ErrorPage(w, http.StatusNotFound, "Page non trouvée.")
 		return
 	}
 	username := strings.TrimPrefix(usernamePrefixed, "@")
@@ -27,9 +27,9 @@ func UserProfile(w http.ResponseWriter, r *http.Request) {
 	err := db.DB.QueryRow(queryUser, username).Scan(&targetUser.ID, &targetUser.Username, &targetUser.Mail, &targetUser.Banner, &targetUser.PpURL, &targetUser.Bio)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			http.NotFound(w, r)
+			templates.ErrorPage(w, http.StatusNotFound, "Profil introuvable.")
 		} else {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			templates.ErrorPage(w, http.StatusInternalServerError, "Erreur lors de la récupération du profil.")
 		}
 		return
 	}
@@ -117,7 +117,7 @@ func UserSettings(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		if !VerifyCSRFToken(r) {
-			http.Error(w, "Invalid CSRF Token", http.StatusForbidden)
+			templates.ErrorPage(w, http.StatusForbidden, "Session expirée ou requête CSRF invalide.")
 			return
 		}
 
@@ -132,7 +132,7 @@ func UserSettings(w http.ResponseWriter, r *http.Request) {
 		const updateUser = `UPDATE users SET bio = ?, banner = ?, pp_url = ? WHERE id = ?`
 		_, err := db.DB.Exec(updateUser, bio, banner, ppURL, loggedUser.ID)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			templates.ErrorPage(w, http.StatusInternalServerError, "Impossible de sauvegarder vos paramètres.")
 			return
 		}
 

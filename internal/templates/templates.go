@@ -13,3 +13,11 @@ func Render(path string, w http.ResponseWriter, data any) {
 	}
 	tmpl.Execute(w, data)
 }
+
+func ErrorPage(w http.ResponseWriter, statusCode int, message string) {
+	w.WriteHeader(statusCode)
+	Render("error", w, map[string]any{
+		"StatusCode": statusCode,
+		"Message":    message,
+	})
+}

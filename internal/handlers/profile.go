@@ -35,6 +35,10 @@ func UserProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if targetUser.PpURL == "" || strings.Contains(targetUser.PpURL, "giphy.gif") {
+		targetUser.PpURL = "/static/images/default-avatar.svg"
+	}
+
 	loggedUser, isLogged := getLoggedUser(r)
 
 	const postsQuery = `SELECT posts.id, posts.title, posts.description, posts.author_id, posts.image_url, posts.tags, posts.created_at, users.username FROM posts INNER JOIN users ON posts.author_id = users.id WHERE posts.author_id = ? ORDER BY posts.created_at DESC`
@@ -109,10 +113,6 @@ func UserProfile(w http.ResponseWriter, r *http.Request) {
 
 func UserSettings(w http.ResponseWriter, r *http.Request) {
 	loggedUser, isLogged := getLoggedUser(r)
-	if !isLogged {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
 
 	csrfToken := GetOrCreateCSRFToken(w, r)
 
@@ -219,8 +219,8 @@ func UserSettings(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		if ppURL == "" {
-			ppURL = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTNud3o0NzV1eHZkOGl4ZmhmcDJycWNndTNmODcxdDZoMWY3ZTd3aCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GeG3Ulpo8WrwpNMpUz/giphy.gif"
+		if ppURL == "" || strings.Contains(ppURL, "giphy.gif") {
+			ppURL = "/static/images/default-avatar.svg"
 		}
 
 		const updateUser = `UPDATE users SET username = ?, mail = ?, bio = ?, banner = ?, pp_url = ?, favorite_instrument = ?, preferred_genres = ?, profile_theme = ?, custom_status = ? WHERE id = ?`

@@ -30,6 +30,10 @@ func getLoggedUser(r *http.Request) (UserData, bool) {
 		return userData, false
 	}
 
+	if userData.PpURL == "" || strings.Contains(userData.PpURL, "giphy.gif") {
+		userData.PpURL = "/static/images/default-avatar.svg"
+	}
+
 	return userData, true
 }
 
@@ -46,11 +50,7 @@ func PostDetail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	isLogged := false
-	userData, logged := getLoggedUser(r)
-	if logged {
-		isLogged = true
-	}
+	userData, isLogged := getLoggedUser(r)
 
 	var title, description, imageURL, authorName, createdAt string
 	var authorID int
@@ -95,8 +95,8 @@ func PostDetail(w http.ResponseWriter, r *http.Request) {
 	var authorPp string
 	const queryPp = `SELECT pp_url FROM users WHERE id = ?`
 	_ = db.DB.QueryRow(queryPp, authorID).Scan(&authorPp)
-	if authorPp == "" {
-		authorPp = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTNud3o0NzV1eHZkOGl4ZmhmcDJycWNndTNmODcxdDZoMWY3ZTd3aCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GeG3Ulpo8WrwpNMpUz/giphy.gif"
+	if authorPp == "" || strings.Contains(authorPp, "giphy.gif") {
+		authorPp = "/static/images/default-avatar.svg"
 	}
 
 	csrfToken := GetOrCreateCSRFToken(w, r)
@@ -122,8 +122,8 @@ func PostDetail(w http.ResponseWriter, r *http.Request) {
 					_ = db.DB.QueryRow(`SELECT vote FROM comment_likes WHERE comment_id = ? AND user_id = ?`, cID, userData.ID).Scan(&cUserVote)
 				}
 
-				if cPp == "" {
-					cPp = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTNud3o0NzV1eHZkOGl4ZmhmcDJycWNndTNmODcxdDZoMWY3ZTd3aCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GeG3Ulpo8WrwpNMpUz/giphy.gif"
+				if cPp == "" || strings.Contains(cPp, "giphy.gif") {
+					cPp = "/static/images/default-avatar.svg"
 				}
 
 				parentIDVal := 0
@@ -203,11 +203,7 @@ func DislikePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func votePost(w http.ResponseWriter, r *http.Request, voteType int) {
-	userData, logged := getLoggedUser(r)
-	if !logged {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
+	userData, _ := getLoggedUser(r)
 
 	postIDStr := r.URL.Query().Get("id")
 	postID, err := strconv.Atoi(postIDStr)
@@ -242,11 +238,7 @@ func votePost(w http.ResponseWriter, r *http.Request, voteType int) {
 }
 
 func CommentPost(w http.ResponseWriter, r *http.Request) {
-	userData, logged := getLoggedUser(r)
-	if !logged {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
+	userData, _ := getLoggedUser(r)
 
 	if r.Method == "POST" {
 		if !VerifyCSRFToken(r) {
@@ -299,11 +291,7 @@ func DislikeComment(w http.ResponseWriter, r *http.Request) {
 }
 
 func voteComment(w http.ResponseWriter, r *http.Request, voteType int) {
-	userData, logged := getLoggedUser(r)
-	if !logged {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
+	userData, _ := getLoggedUser(r)
 
 	commentIDStr := r.URL.Query().Get("id")
 	commentID, err := strconv.Atoi(commentIDStr)
@@ -338,11 +326,7 @@ func voteComment(w http.ResponseWriter, r *http.Request, voteType int) {
 }
 
 func EditPost(w http.ResponseWriter, r *http.Request) {
-	userData, logged := getLoggedUser(r)
-	if !logged {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
+	userData, _ := getLoggedUser(r)
 
 	postIDStr := r.URL.Query().Get("id")
 	postID, err := strconv.Atoi(postIDStr)
@@ -399,6 +383,8 @@ func EditPost(w http.ResponseWriter, r *http.Request) {
 				"Tags":        tagsStr,
 				"AllTags":     getAllTags(),
 				"CSRFToken":   csrfToken,
+				"IsLogged":    true,
+				"UserData":    userData,
 			}
 			templates.Render("creator/editPost", w, data)
 			return
@@ -423,17 +409,15 @@ func EditPost(w http.ResponseWriter, r *http.Request) {
 		"Tags":        tagsStr,
 		"AllTags":     getAllTags(),
 		"CSRFToken":   csrfToken,
+		"IsLogged":    true,
+		"UserData":    userData,
 	}
 
 	templates.Render("creator/editPost", w, data)
 }
 
 func DeletePost(w http.ResponseWriter, r *http.Request) {
-	userData, logged := getLoggedUser(r)
-	if !logged {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
+	userData, _ := getLoggedUser(r)
 
 	postIDStr := r.URL.Query().Get("id")
 	postID, err := strconv.Atoi(postIDStr)

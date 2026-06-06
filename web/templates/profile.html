@@ -21,12 +21,21 @@
                 </svg>
                 <span>SoundPulse</span>
             </a>
+            
+            <input type="checkbox" id="nav-toggle" class="nav-toggle-cb" style="display: none;">
+            <label for="nav-toggle" class="nav-toggle-label" aria-label="Menu de navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+            
             <nav class="nav-links" aria-label="Navigation principale">
                 <a href="/"><i class="fa-solid fa-house" aria-hidden="true"></i> <span>Accueil</span></a>
                 {{if .IsLogged}}
                 <a href="/createPost"><i class="fa-solid fa-plus" aria-hidden="true"></i> <span>Créer</span></a>
                 <a href="/createTag"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> <span>Tag</span></a>
                 <a href="/settings" aria-label="Paramètres du compte"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> <span>Paramètres</span></a>
+                <a href="/user/@{{.UserData.Username}}"><i class="fa-solid fa-user" aria-hidden="true"></i> <span>Mon Profil</span></a>
                 <a href="/logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Déconnexion</span></a>
                 {{else}}
                 <a href="/login" class="login-btn"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Connexion</span></a>
@@ -45,7 +54,7 @@
 
             {{if .IsLogged}}
             <div class="sidebar-user-card">
-                <img src="{{.UserData.PpURL}}" alt="Photo de profil de {{.UserData.Username}}" class="user-card-avatar">
+                <img src="{{.UserData.PpURL}}" alt="Photo de profil de {{.UserData.Username}}" class="user-card-avatar" width="42" height="42">
                 <div class="user-card-info">
                     <span class="user-card-name">{{.UserData.Username}}</span>
                     <span class="user-card-email">{{.UserData.Mail}}</span>
@@ -64,7 +73,7 @@
 
                 <div style="padding: 2rem; position: relative;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: -6rem; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-                        <img src="{{.TargetUser.PpURL}}" alt="Avatar de {{.TargetUser.Username}}" style="width: 110px; height: 110px; border-radius: var(--radius-lg); object-fit: cover; border: 4px solid var(--bg-main); background: var(--bg-main); box-shadow: var(--shadow-md);">
+                        <img src="{{.TargetUser.PpURL}}" alt="Avatar de {{.TargetUser.Username}}" width="110" height="110" style="width: 110px; height: 110px; border-radius: var(--radius-lg); object-fit: cover; border: 4px solid var(--bg-main); background: var(--bg-main); box-shadow: var(--shadow-md);">
                         
                         {{if .IsSelf}}
                         <a href="/settings" class="post-tag" style="background: var(--accent-gradient); color: #ffffff; border: none; padding: 0.6rem 1.25rem; font-family: 'Outfit', sans-serif; font-weight: 700; border-radius: var(--radius-md); text-decoration: none; box-shadow: var(--shadow-md);"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> Éditer le profil</a>
@@ -112,7 +121,7 @@
             </section>
 
             <section class="post-container">
-                <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem;"><i class="fa-solid fa-music" aria-hidden="true"></i> Publications de @{{.TargetUser.Username}} ({{len .Posts}})</h3>
+                <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem;"><i class="fa-solid fa-music" aria-hidden="true"></i> Publications de @{{.TargetUser.Username}} ({{len .Posts}})</h2>
 
                 {{if .Posts}}
                 <div class="post-grid">
@@ -120,7 +129,7 @@
                     <article class="post-card">
                         <header class="post-card-header">
                             <div class="author-info">
-                                <img src="{{.author_pp}}" alt="Avatar de {{.author_name}}" class="auth-pp">
+                                <img src="{{.author_pp}}" alt="Avatar de {{.author_name}}" class="auth-pp" width="40" height="40" loading="lazy">
                                 <div class="author-meta">
                                     <span class="author-name">{{.author_name}}</span>
                                     <span class="post-card-ago"><i class="fa-regular fa-clock" aria-hidden="true"></i> Publié le {{.created_at}}</span>
@@ -130,14 +139,14 @@
                         
                         <div class="post-card-content">
                             <a href="/post/{{.id}}" style="color: inherit; text-decoration: none;" aria-label="Lire la publication {{.title}}">
-                                <h4 class="post-card-title">{{.title}}</h4>
+                                <h3 class="post-card-title">{{.title}}</h3>
                             </a>
                             <p class="post-card-description">{{.description}}</p>
                             
                             {{if .image_url}}
                             <div class="post-card-image-wrapper">
                                 <a href="/post/{{.id}}" aria-label="Voir l'image du post">
-                                    <img src="{{.image_url}}" alt="Illustration pour {{.title}}" class="post-card-image" onerror="this.style.display='none'; this.closest('.post-card-image-wrapper').style.display='none';">
+                                    <img src="{{.image_url}}" alt="Illustration pour {{.title}}" class="post-card-image" width="600" height="300" loading="lazy">
                                 </a>
                             </div>
                             {{end}}

@@ -1,15 +1,12 @@
 package handlers
 
 import (
-	"database/sql"
 	"github.com/WayeNot/forum-project/internal/db"
 	"github.com/WayeNot/forum-project/internal/templates"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
-
-var DB *sql.DB
 
 func SetCookie(userID int) *http.Cookie {
 	idSessionId := uuid.New().String()
@@ -89,7 +86,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	banner := ""
-	pp_url := "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTNud3o0NzV1eHZkOGl4ZmhmcDJycWNndTNmODcxdDZoMWY3ZTd3aCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GeG3Ulpo8WrwpNMpUz/giphy.gif"
+	pp_url := "/static/images/default-avatar.svg"
 	bio := "Aucune bio pour le moment !"
 	status := "En ligne"
 

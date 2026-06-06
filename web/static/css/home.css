@@ -39,16 +39,27 @@
     display: none;
 }
 
-.sidebar-section h3 {
+.sidebar-section h2, .sidebar-section h3 {
     font-family: 'Outfit', sans-serif;
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--text-muted);
-    margin-bottom: 1rem;
+    margin: 0;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.sidebar-section summary {
+    list-style: none;
+    outline: none;
+    pointer-events: none;
+    cursor: default;
+}
+
+.sidebar-section summary::-webkit-details-marker {
+    display: none;
 }
 
 .tag-list {
@@ -365,5 +376,64 @@
         position: relative;
         top: 0;
         height: auto;
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .sidebar-section {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        background: rgba(255, 255, 255, 0.02);
+        padding: 0.75rem 1rem;
+        width: 100%;
+    }
+
+    .sidebar-section summary {
+        pointer-events: auto;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        user-select: none;
+        width: 100%;
+    }
+
+    .sidebar-section summary h2, .sidebar-section summary h3 {
+        margin: 0;
+    }
+
+    .sidebar-section summary::after {
+        content: "\f078"; /* FontAwesome chevron-down code */
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        transition: transform 0.25s ease;
+    }
+
+    .sidebar-section[open] summary::after {
+        transform: rotate(180deg);
+    }
+
+    .sidebar-section .tag-list {
+        margin-top: 0.75rem;
+        width: 100%;
+    }
+
+    .tag-list#tagListContainer {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .tag-list#tagListContainer::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .tag-list#tagListContainer .tag-item {
+        flex-shrink: 0;
     }
 }

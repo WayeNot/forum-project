@@ -22,12 +22,21 @@
                 </svg>
                 <span>SoundPulse</span>
             </a>
+            
+            <input type="checkbox" id="nav-toggle" class="nav-toggle-cb" style="display: none;">
+            <label for="nav-toggle" class="nav-toggle-label" aria-label="Menu de navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+            
             <nav class="nav-links" aria-label="Navigation principale">
                 <a href="/"><i class="fa-solid fa-house" aria-hidden="true"></i> <span>Accueil</span></a>
                 {{if .IsLogged}}
                 <a href="/createPost"><i class="fa-solid fa-plus" aria-hidden="true"></i> <span>Créer</span></a>
-                <a href="/createTag" class="active"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> <span>Tag</span></a>
+                <a href="/createTag"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> <span>Tag</span></a>
                 <a href="/settings" aria-label="Paramètres du compte"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> <span>Paramètres</span></a>
+                <a href="/user/@{{.UserData.Username}}"><i class="fa-solid fa-user" aria-hidden="true"></i> <span>Mon Profil</span></a>
                 <a href="/logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Déconnexion</span></a>
                 {{end}}
             </nav>

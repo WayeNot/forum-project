@@ -144,3 +144,10 @@
 .btn-danger:hover {
     box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35) !important;
 }
+
+@media (max-width: 600px) {
+    .form-container {
+        padding: 1.5rem;
+        margin: 1rem auto;
+    }
+}

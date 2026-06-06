@@ -19,22 +19,9 @@ type PostData struct {
 
 func CreatePost(w http.ResponseWriter, r *http.Request) {
 	var postData PostData
-	var user_id int
 
-	session, err := r.Cookie("session_id")
-	if err != nil || session.Value == "" {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-
-	const requestUserId = `SELECT user_id FROM sessions WHERE session_id = ? AND is_active = TRUE LIMIT 1`
-	err = db.DB.QueryRow(requestUserId, session.Value).Scan(&user_id)
-	if err != nil {
-		println("Erreur lors de la récupération de l'ID de l'utilisateur :", err.Error())
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-	postData.Author_id = user_id
+	userData, _ := getLoggedUser(r)
+	postData.Author_id = userData.ID
 
 	csrfToken := GetOrCreateCSRFToken(w, r)
 
@@ -44,9 +31,9 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = r.ParseForm()
+		err := r.ParseForm()
 		if err != nil {
-			templates.Render("creator/createPost", w, map[string]any{"Error": "Formulaire invalide", "CSRFToken": csrfToken, "Tags": getAllTags()})
+			templates.Render("creator/createPost", w, map[string]any{"Error": "Formulaire invalide", "CSRFToken": csrfToken, "Tags": getAllTags(), "IsLogged": true, "UserData": userData})
 			return
 		}
 
@@ -61,14 +48,14 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		postData.Tags = strings.Join(selectedTags, ",")
 
 		if postData.Title == "" || postData.Description == "" {
-			templates.Render("creator/createPost", w, map[string]any{"Error": "Le titre et la description sont requis", "CSRFToken": csrfToken, "Tags": getAllTags()})
+			templates.Render("creator/createPost", w, map[string]any{"Error": "Le titre et la description sont requis", "CSRFToken": csrfToken, "Tags": getAllTags(), "IsLogged": true, "UserData": userData})
 			return
 		}
 
 		const insertPost = `INSERT INTO posts (title, description, author_id, image_url, tags) VALUES (?, ?, ?, ?, ?)`
-		_, err := db.DB.Exec(insertPost, postData.Title, postData.Description, postData.Author_id, postData.Image_url, postData.Tags)
+		_, err = db.DB.Exec(insertPost, postData.Title, postData.Description, postData.Author_id, postData.Image_url, postData.Tags)
 		if err != nil {
-			templates.Render("creator/createPost", w, map[string]any{"Error": "Erreur lors de la création du post", "CSRFToken": csrfToken, "Tags": getAllTags()})
+			templates.Render("creator/createPost", w, map[string]any{"Error": "Erreur lors de la création du post", "CSRFToken": csrfToken, "Tags": getAllTags(), "IsLogged": true, "UserData": userData})
 			return
 		}
 
@@ -76,5 +63,5 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templates.Render("creator/createPost", w, map[string]any{"CSRFToken": csrfToken, "Tags": getAllTags()})
+	templates.Render("creator/createPost", w, map[string]any{"CSRFToken": csrfToken, "Tags": getAllTags(), "IsLogged": true, "UserData": userData})
 }

@@ -35,9 +35,14 @@
             
             <form action="/register" method="post" class="auth-form">
                 <div class="input-group">
-                    <input name="username" class="form-input" required placeholder="Nom d'utilisateur" type="text" maxlength="55" aria-label="Nom d'utilisateur" />
-                    <input name="mail" class="form-input" required placeholder="Adresse email" type="email" maxlength="55" aria-label="Adresse email" />
-                    <input name="password" class="form-input" required placeholder="Mot de passe" type="password" maxlength="100" aria-label="Mot de passe" />
+                    <label for="username" class="sr-only">Nom d'utilisateur</label>
+                    <input name="username" id="username" class="form-input" required placeholder="Nom d'utilisateur" type="text" maxlength="55" aria-label="Nom d'utilisateur" />
+                    
+                    <label for="mail" class="sr-only">Adresse email</label>
+                    <input name="mail" id="mail" class="form-input" required placeholder="Adresse email" type="email" maxlength="55" aria-label="Adresse email" />
+                    
+                    <label for="password" class="sr-only">Mot de passe</label>
+                    <input name="password" id="password" class="form-input" required placeholder="Mot de passe" type="password" maxlength="100" aria-label="Mot de passe" />
                 </div>
                 
                 <button type="submit" class="btn-submit">

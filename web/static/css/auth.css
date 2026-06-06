@@ -137,3 +137,9 @@
         transform: translateY(0);
     }
 }
+
+@media (max-width: 480px) {
+    .authForm {
+        padding: 1.5rem 1.25rem;
+    }
+}

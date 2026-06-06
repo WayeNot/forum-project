@@ -48,24 +48,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Pragma", "no-cache")
 	w.Header().Set("Expires", "0")
 
-	isLogged := false
-	var userData UserData
-
-	session, err := r.Cookie("session_id")
-	if err == nil && session.Value != "" {
-		var user_id int
-		const requestUserId = `SELECT user_id FROM sessions WHERE session_id = ? LIMIT 1`
-		cleanSessionValue := strings.TrimSpace(session.Value)
-		err = db.DB.QueryRow(requestUserId, cleanSessionValue).Scan(&user_id)
-
-		if err == nil {
-			const requestUser = `SELECT id, username, mail, banner, pp_url, bio, favorite_instrument, preferred_genres, profile_theme, custom_status FROM users WHERE id = ?`
-			err = db.DB.QueryRow(requestUser, user_id).Scan(&userData.ID, &userData.Username, &userData.Mail, &userData.Banner, &userData.PpURL, &userData.Bio, &userData.FavoriteInstrument, &userData.PreferredGenres, &userData.ProfileTheme, &userData.CustomStatus)
-			if err == nil {
-				isLogged = true
-			}
-		}
-	}
+	userData, isLogged := getLoggedUser(r)
 
 	filter := r.URL.Query().Get("filter")
 	if (filter == "created" || filter == "liked") && !isLogged {
@@ -159,8 +142,8 @@ func Home(w http.ResponseWriter, r *http.Request) {
 			var ppURL string
 			const queryPpURL = `SELECT pp_url FROM users WHERE id = ?`
 			err := db.DB.QueryRow(queryPpURL, userID).Scan(&ppURL)
-			if err != nil {
-				return "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTNud3o0NzV1eHZkOGl4ZmhmcDJycWNndTNmODcxdDZoMWY3ZTd3aCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GeG3Ulpo8WrwpNMpUz/giphy.gif"
+			if err != nil || ppURL == "" || strings.Contains(ppURL, "giphy.gif") {
+				return "/static/images/default-avatar.svg"
 			}
 			return ppURL
 		}

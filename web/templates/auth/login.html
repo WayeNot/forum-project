@@ -35,8 +35,11 @@
             
             <form action="/login" method="post" class="auth-form">
                 <div class="input-group">
-                    <input required class="form-input" name="usernameOrMail" placeholder="Nom d'utilisateur ou email" type="text" maxlength="55" aria-label="Nom d'utilisateur ou adresse email" />
-                    <input required class="form-input" name="password" placeholder="Mot de passe" type="password" maxlength="100" aria-label="Mot de passe" />
+                    <label for="usernameOrMail" class="sr-only">Nom d'utilisateur ou adresse email</label>
+                    <input required class="form-input" id="usernameOrMail" name="usernameOrMail" placeholder="Nom d'utilisateur ou email" type="text" maxlength="55" aria-label="Nom d'utilisateur ou adresse email" />
+                    
+                    <label for="password" class="sr-only">Mot de passe</label>
+                    <input required class="form-input" id="password" name="password" placeholder="Mot de passe" type="password" maxlength="100" aria-label="Mot de passe" />
                 </div>
                 
                 <button type="submit" class="btn-submit">

@@ -72,7 +72,7 @@
                     {{if .IsAuthor}}
                     <div style="display: flex; gap: 0.5rem;">
                         <a href="/post/edit?id={{.PostID}}" class="post-tag" style="background: rgba(6, 182, 212, 0.2); border-color: rgba(6, 182, 212, 0.4); color: var(--text-primary);"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Modifier</a>
-                        <a href="/post/delete?id={{.PostID}}" class="post-tag" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4); color: #ef4444;" onclick="return confirm('Confirmer la suppression de ce post ?')"><i class="fa-solid fa-trash" aria-hidden="true"></i> Supprimer</a>
+                        <a href="/post/delete?id={{.PostID}}" class="post-tag" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4); color: #ef4444;"><i class="fa-solid fa-trash" aria-hidden="true"></i> Supprimer</a>
                     </div>
                     {{end}}
                 </header>
@@ -106,8 +106,22 @@
                 </div>
             </article>
 
+            <style>
+                .reply-toggle-cb ~ .reply-form-wrapper {
+                    display: none;
+                }
+                .reply-toggle-cb:checked ~ .reply-form-wrapper {
+                    display: block;
+                }
+                .reply-comment-node {
+                    border-left: 2px solid var(--border-color);
+                    padding-left: 1rem;
+                    margin-left: 0.5rem;
+                }
+            </style>
+
             <section style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.75rem; backdrop-filter: blur(12px);">
-                <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem;"><i class="fa-solid fa-comments" aria-hidden="true"></i> Commentaires ({{len .Comments}})</h2>
+                <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem;"><i class="fa-solid fa-comments" aria-hidden="true"></i> Commentaires ({{.CommentsCount}})</h2>
 
                 {{if .IsLogged}}
                 <form action="/post/comment" method="post" style="margin-bottom: 2rem; display: flex; flex-direction: column; gap: 1rem;">
@@ -123,36 +137,7 @@
                 {{end}}
                 <div id="commentsContainer" style="display: flex; flex-direction: column; gap: 1.5rem;">
                     {{range .Comments}}
-                    <div class="comment-node" data-id="{{.id}}" data-parent-id="{{.parent_id}}" style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <a href="/user/@{{.author_name}}" style="text-decoration: none; color: inherit;" aria-label="Profil de {{.author_name}}">
-                                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <img src="{{.author_pp}}" alt="Profil de {{.author_name}}" style="width: 28px; height: 28px; border-radius: var(--radius-sm); object-fit: cover;">
-                                    <span style="font-weight: 600; font-size: 0.9rem; color: var(--text-primary);">{{.author_name}}</span>
-                                    <span style="font-size: 0.75rem; color: var(--text-muted);"><i class="fa-regular fa-clock" aria-hidden="true"></i> {{.created_at}}</span>
-                                </div>
-                            </a>
-                        </div>
-                        
-                        <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 0.5rem; white-space: pre-wrap; word-break: break-word;">{{.content}}</p>
-                        
-                        <div style="display: flex; gap: 0.5rem; align-items: center;">
-                            <a href="/comment/like?id={{.id}}" class="post-tag {{if eq .user_vote 1}}active{{end}}" style="font-size: 0.75rem; padding: 0.15rem 0.5rem;" aria-label="Aimer ce commentaire, {{.likes_count}} j'aime">
-                                <i class="fa-solid fa-thumbs-up" aria-hidden="true"></i> {{.likes_count}}
-                            </a>
-                            <a href="/comment/dislike?id={{.id}}" class="post-tag {{if eq .user_vote -1}}active{{end}}" style="font-size: 0.75rem; padding: 0.15rem 0.5rem; color: #ef4444;" aria-label="Ne pas aimer ce commentaire, {{.dislikes_count}} j'aime pas">
-                                <i class="fa-solid fa-thumbs-down" aria-hidden="true"></i> {{.dislikes_count}}
-                            </a>
-                            {{if $.IsLogged}}
-                            <button class="post-tag" onclick="showReplyForm('{{.id}}')" style="font-size: 0.75rem; padding: 0.15rem 0.5rem; background: none; border: 1px solid var(--border-color); cursor: pointer; color: var(--text-secondary);">
-                                <i class="fa-solid fa-reply" aria-hidden="true"></i> Répondre
-                            </button>
-                            {{end}}
-                        </div>
-                        
-                        <div id="reply-form-container-{{.id}}" style="margin-top: 0.75rem;"></div>
-                        <div class="replies-list" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;"></div>
-                    </div>
+                        {{template "renderComment" .}}
                     {{else}}
                     <p style="text-align: center; color: var(--text-muted); font-size: 0.95rem; padding: 1rem;">Aucun commentaire pour le moment.</p>
                     {{end}}
@@ -161,63 +146,56 @@
         </div>
     </main>
 
-    <script>
-        window.onerror = function(msg, url, line) {
-            alert('JS Error: ' + msg + '\nURL: ' + url + '\nLine: ' + line);
-            return false;
-        };
-        const cContainer = document.getElementById('commentsContainer');
-        if (cContainer) {
-            const commentElements = Array.from(cContainer.querySelectorAll('.comment-node'));
-            const commentMap = {};
-            commentElements.forEach(el => {
-                const id = el.getAttribute('data-id');
-                commentMap[id] = el;
-            });
-
-            commentElements.forEach(el => {
-                const parentId = el.getAttribute('data-parent-id');
-                if (parentId && parentId !== "0" && commentMap[parentId]) {
-                    const repliesList = commentMap[parentId].querySelector('.replies-list');
-                    if (repliesList) {
-                        repliesList.appendChild(el);
-                        el.style.borderLeft = "2px solid var(--border-color)";
-                        el.style.paddingLeft = "1rem";
-                        el.style.marginLeft = "0.5rem";
-                        el.style.borderBottom = "none";
-                    }
-                }
-            });
-        }
-
-        function showReplyForm(commentId) {
-            const container = document.getElementById('reply-form-container-' + commentId);
-            if (!container) return;
-            if (container.children.length > 0) {
-                container.innerHTML = '';
-                return;
-            }
-
-            const form = document.createElement('form');
-            form.action = '/post/comment';
-            form.method = 'post';
-            form.style.display = 'flex';
-            form.style.flexDirection = 'column';
-            form.style.gap = '0.5rem';
-            form.style.marginTop = '0.5rem';
-
-            form.innerHTML = `
-                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
-                <input type="hidden" name="post_id" value="{{.PostID}}">
-                <input type="hidden" name="parent_id" value="${commentId}">
-                <textarea name="content" required placeholder="Votre réponse..." style="width: 100%; height: 4rem; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); background: rgba(255, 255, 255, 0.03); color: var(--text-primary); outline: none; border-radius: var(--radius-md); font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
-                <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
-                    <button type="button" onclick="document.getElementById('reply-form-container-${commentId}').innerHTML = ''" class="post-tag" style="background: none; border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; padding: 0.25rem 0.75rem; border-radius: var(--radius-sm);">Annuler</button>
-                    <button type="submit" class="login-btn" style="border: none; padding: 0.25rem 0.75rem; border-radius: var(--radius-sm); font-family: 'Outfit', sans-serif; font-weight: 700; cursor: pointer;">Répondre</button>
-                </div>
-            `;
-            container.appendChild(form);
-        }
-    </script>
+{{define "renderComment"}}
+<div class="comment-node {{if ne .parent_id 0}}reply-comment-node{{end}}" style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-top: 1rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+        <a href="/user/@{{.author_name}}" style="text-decoration: none; color: inherit;" aria-label="Profil de {{.author_name}}">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <img src="{{.author_pp}}" alt="Profil de {{.author_name}}" style="width: 28px; height: 28px; border-radius: var(--radius-sm); object-fit: cover;">
+                <span style="font-weight: 600; font-size: 0.9rem; color: var(--text-primary);">{{.author_name}}</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);"><i class="fa-regular fa-clock" aria-hidden="true"></i> {{.created_at}}</span>
+            </div>
+        </a>
+    </div>
+    
+    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 0.5rem; white-space: pre-wrap; word-break: break-word;">{{.content}}</p>
+    
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <a href="/comment/like?id={{.id}}" class="post-tag {{if eq .user_vote 1}}active{{end}}" style="font-size: 0.75rem; padding: 0.15rem 0.5rem;" aria-label="Aimer ce commentaire, {{.likes_count}} j'aime">
+            <i class="fa-solid fa-thumbs-up" aria-hidden="true"></i> {{.likes_count}}
+        </a>
+        <a href="/comment/dislike?id={{.id}}" class="post-tag {{if eq .user_vote -1}}active{{end}}" style="font-size: 0.75rem; padding: 0.15rem 0.5rem; color: #ef4444;" aria-label="Ne pas aimer ce commentaire, {{.dislikes_count}} j'aime pas">
+            <i class="fa-solid fa-thumbs-down" aria-hidden="true"></i> {{.dislikes_count}}
+        </a>
+        {{if .IsLogged}}
+        <label for="reply-toggle-{{.id}}" class="post-tag" style="font-size: 0.75rem; padding: 0.15rem 0.5rem; background: none; border: 1px solid var(--border-color); cursor: pointer; color: var(--text-secondary);">
+            <i class="fa-solid fa-reply" aria-hidden="true"></i> Répondre
+        </label>
+        {{end}}
+    </div>
+    
+    {{if .IsLogged}}
+    <input type="checkbox" id="reply-toggle-{{.id}}" class="reply-toggle-cb" style="display: none;">
+    <div class="reply-form-wrapper" style="margin-top: 0.75rem;">
+        <form action="/post/comment" method="post" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+            <input type="hidden" name="post_id" value="{{.PostID}}">
+            <input type="hidden" name="parent_id" value="{{.id}}">
+            <textarea name="content" required placeholder="Votre réponse..." style="width: 100%; height: 4rem; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); background: rgba(255, 255, 255, 0.03); color: var(--text-primary); outline: none; border-radius: var(--radius-md); font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                <label for="reply-toggle-{{.id}}" class="post-tag" style="background: none; border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; padding: 0.25rem 0.75rem; border-radius: var(--radius-sm);">Annuler</label>
+                <button type="submit" class="login-btn" style="border: none; padding: 0.25rem 0.75rem; border-radius: var(--radius-sm); font-family: 'Outfit', sans-serif; font-weight: 700; cursor: pointer;">Répondre</button>
+            </div>
+        </form>
+    </div>
+    {{end}}
+    
+    <div class="replies-list" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;">
+        {{range .replies}}
+            {{template "renderComment" .}}
+        {{end}}
+    </div>
+</div>
+{{end}}
 </body>
 </html>

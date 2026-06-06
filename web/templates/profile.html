@@ -95,10 +95,17 @@
                                     {{if .TargetUser.FavoriteInstrument}}{{.TargetUser.FavoriteInstrument}}{{else}}Aucun spécifié{{end}}
                                 </p>
                             </div>
-                            <div>
-                                <h2 style="font-family: 'Outfit', sans-serif; font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 0.5rem;"><i class="fa-solid fa-compact-disc" aria-hidden="true"></i> Genres musicaux</h2>
-                                <div id="genresContainer" data-genres="{{.TargetUser.PreferredGenres}}" style="display: flex; flex-wrap: wrap; gap: 0.35rem;"></div>
-                            </div>
+                                <div id="genresContainer" style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                                    {{if .TargetUser.PreferredGenres}}
+                                        {{range (split .TargetUser.PreferredGenres ",")}}
+                                            {{if .}}
+                                            <span class="post-tag" style="background: rgba(6, 182, 212, 0.06); border-color: rgba(6, 182, 212, 0.2); color: var(--accent-color); font-weight: 500;">{{.}}</span>
+                                            {{end}}
+                                        {{end}}
+                                    {{else}}
+                                        <span style="color: var(--text-muted); font-size: 0.95rem;">Aucun spécifié</span>
+                                    {{end}}
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -167,38 +174,5 @@
             </section>
         </div>
     </main>
-
-    <script>
-        const container = document.getElementById('genresContainer');
-        const genresAttr = container.getAttribute('data-genres');
-        if (genresAttr) {
-            const list = genresAttr.split(',');
-            let added = false;
-            list.forEach(g => {
-                const trimmed = g.trim();
-                if (trimmed) {
-                    const tag = document.createElement('span');
-                    tag.className = 'post-tag';
-                    tag.style.background = 'rgba(6, 182, 212, 0.06)';
-                    tag.style.borderColor = 'rgba(6, 182, 212, 0.2)';
-                    tag.style.color = 'var(--accent-color)';
-                    tag.style.fontWeight = '500';
-                    tag.textContent = trimmed;
-                    container.appendChild(tag);
-                    added = true;
-                }
-            });
-            if (!added) {
-                container.textContent = 'Aucun spécifié';
-                container.style.color = 'var(--text-muted)';
-                container.style.fontSize = '0.95rem';
-            }
-        } else {
-            container.textContent = 'Aucun spécifié';
-            container.style.color = 'var(--text-muted)';
-            container.style.fontSize = '0.95rem';
-        }
-    </script>
 </body>
-
 </html>

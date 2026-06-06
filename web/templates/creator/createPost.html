@@ -69,7 +69,6 @@
                     
                     <div class="form-group">
                         <label>Sélectionner des tags</label>
-                        <input type="text" id="tagSearch" placeholder="🔍 Rechercher un tag..." class="inputText" style="margin-bottom: 0.5rem; font-size: 0.85rem; padding: 0.5rem 0.75rem;" onkeyup="filterTagsSearch()" aria-label="Rechercher un tag">
                         <div id="tagsContainer" style="display: flex; flex-wrap: wrap; gap: 0.5rem; max-height: 150px; overflow-y: auto; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.01);">
                             {{range .Tags}}
                             <label class="checkbox-label tag-checkbox-item" style="width: fit-content; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.8rem; font-size: 0.85rem; border-radius: var(--radius-sm);">
@@ -87,26 +86,11 @@
                     </div>
 
                     <button type="submit" class="btn-submit-creator">
-                        <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Publier le post
+                         <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Publier le post
                     </button>
                 </form>
             </section>
         </div>
     </main>
-    <script>
-        function filterTagsSearch() {
-            var input = document.getElementById('tagSearch');
-            var filter = input.value.toLowerCase();
-            var items = document.getElementsByClassName('tag-checkbox-item');
-            for (var i = 0; i < items.length; i++) {
-                var text = items[i].textContent || items[i].innerText;
-                if (text.toLowerCase().indexOf(filter) > -1) {
-                    items[i].style.display = "";
-                } else {
-                    items[i].style.display = "none";
-                }
-            }
-        }
-    </script>
 </body>
 </html>

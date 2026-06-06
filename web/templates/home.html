@@ -57,12 +57,7 @@
                 </div>
             </div>
 
-            <div class="sidebar-section">
-                <h3><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Filtrer</h3>
-                <div class="tag-search-container">
-                    <input type="text" id="tagSearchInput" class="tag-search-input" placeholder="Rechercher un tag..." onkeyup="filterTags()" aria-label="Filtrer les tags">
-                </div>
-            </div>
+
 
             <div class="sidebar-section">
                 <h3><i class="fa-solid fa-hashtag" aria-hidden="true"></i> Catégories</h3>
@@ -171,22 +166,6 @@
             </section>
         </div>
     </main>
-
-    <script>
-        function filterTags() {
-            var input = document.getElementById('tagSearchInput');
-            var filter = input.value.toLowerCase();
-            var items = document.getElementsByClassName('tag-item-selectable');
-            for (var i = 0; i < items.length; i++) {
-                var text = items[i].textContent || items[i].innerText;
-                if (text.toLowerCase().indexOf(filter) > -1) {
-                    items[i].style.display = "";
-                } else {
-                    items[i].style.display = "none";
-                }
-            }
-        }
-    </script>
 </body>
 
 </html>

@@ -85,46 +85,46 @@
 
                     <div class="form-group">
                         <label for="favInstrumentSelect">Instrument favori</label>
-                        <select name="favorite_instrument" id="favInstrumentSelect" class="inputSelect" data-selected="{{.UserData.FavoriteInstrument}}">
-                            <option value="">-- Aucun --</option>
-                            <option value="Guitare">Guitare</option>
-                            <option value="Piano">Piano</option>
-                            <option value="Batterie">Batterie</option>
-                            <option value="Synthétiseur">Synthétiseur</option>
-                            <option value="Chant">Chant</option>
-                            <option value="Basse">Basse</option>
-                            <option value="Violon">Violon</option>
-                            <option value="Saxophone">Saxophone</option>
-                            <option value="Flûte">Flûte</option>
-                            <option value="Autre">Autre</option>
+                        <select name="favorite_instrument" id="favInstrumentSelect" class="inputSelect">
+                            <option value="" {{if eq .UserData.FavoriteInstrument ""}}selected{{end}}>-- Aucun --</option>
+                            <option value="Guitare" {{if eq .UserData.FavoriteInstrument "Guitare"}}selected{{end}}>Guitare</option>
+                            <option value="Piano" {{if eq .UserData.FavoriteInstrument "Piano"}}selected{{end}}>Piano</option>
+                            <option value="Batterie" {{if eq .UserData.FavoriteInstrument "Batterie"}}selected{{end}}>Batterie</option>
+                            <option value="Synthétiseur" {{if eq .UserData.FavoriteInstrument "Synthétiseur"}}selected{{end}}>Synthétiseur</option>
+                            <option value="Chant" {{if eq .UserData.FavoriteInstrument "Chant"}}selected{{end}}>Chant</option>
+                            <option value="Basse" {{if eq .UserData.FavoriteInstrument "Basse"}}selected{{end}}>Basse</option>
+                            <option value="Violon" {{if eq .UserData.FavoriteInstrument "Violon"}}selected{{end}}>Violon</option>
+                            <option value="Saxophone" {{if eq .UserData.FavoriteInstrument "Saxophone"}}selected{{end}}>Saxophone</option>
+                            <option value="Flûte" {{if eq .UserData.FavoriteInstrument "Flûte"}}selected{{end}}>Flûte</option>
+                            <option value="Autre" {{if eq .UserData.FavoriteInstrument "Autre"}}selected{{end}}>Autre</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label for="profileThemeSelect">Thème visuel de profil</label>
-                        <select name="profile_theme" id="profileThemeSelect" class="inputSelect" data-selected="{{.UserData.ProfileTheme}}">
-                            <option value="default">Violet Néon (Défaut)</option>
-                            <option value="sunset">Sunset Orange</option>
-                            <option value="electro">Electro Lime</option>
-                            <option value="cyberpunk">Cyberpunk Yellow</option>
+                        <select name="profile_theme" id="profileThemeSelect" class="inputSelect">
+                            <option value="default" {{if eq .UserData.ProfileTheme "default"}}selected{{end}}>Violet Néon (Défaut)</option>
+                            <option value="sunset" {{if eq .UserData.ProfileTheme "sunset"}}selected{{end}}>Sunset Orange</option>
+                            <option value="electro" {{if eq .UserData.ProfileTheme "electro"}}selected{{end}}>Electro Lime</option>
+                            <option value="cyberpunk" {{if eq .UserData.ProfileTheme "cyberpunk"}}selected{{end}}>Cyberpunk Yellow</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>Genres musicaux préférés</label>
-                        <div id="genresCheckboxGroup" data-selected="{{.UserData.PreferredGenres}}" class="checkbox-grid">
-                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Rock"> Rock</label>
-                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Pop"> Pop</label>
-                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Metal"> Metal</label>
-                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Electro"> Electro</label>
-                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Hip-Hop"> Hip-Hop</label>
-                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Jazz"> Jazz</label>
-                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Classique"> Classique</label>
-                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Blues"> Blues</label>
-                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Reggae"> Reggae</label>
-                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Funk"> Funk</label>
-                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Rap"> Rap</label>
-                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Acoustique"> Acoustique</label>
+                        <div id="genresCheckboxGroup" class="checkbox-grid">
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Rock" {{if contains .UserData.PreferredGenres "Rock"}}checked{{end}}> Rock</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Pop" {{if contains .UserData.PreferredGenres "Pop"}}checked{{end}}> Pop</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Metal" {{if contains .UserData.PreferredGenres "Metal"}}checked{{end}}> Metal</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Electro" {{if contains .UserData.PreferredGenres "Electro"}}checked{{end}}> Electro</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Hip-Hop" {{if contains .UserData.PreferredGenres "Hip-Hop"}}checked{{end}}> Hip-Hop</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Jazz" {{if contains .UserData.PreferredGenres "Jazz"}}checked{{end}}> Jazz</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Classique" {{if contains .UserData.PreferredGenres "Classique"}}checked{{end}}> Classique</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Blues" {{if contains .UserData.PreferredGenres "Blues"}}checked{{end}}> Blues</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Reggae" {{if contains .UserData.PreferredGenres "Reggae"}}checked{{end}}> Reggae</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Funk" {{if contains .UserData.PreferredGenres "Funk"}}checked{{end}}> Funk</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Rap" {{if contains .UserData.PreferredGenres "Rap"}}checked{{end}}> Rap</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Acoustique" {{if contains .UserData.PreferredGenres "Acoustique"}}checked{{end}}> Acoustique</label>
                         </div>
                     </div>
 
@@ -158,7 +158,7 @@
                 <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: var(--radius-md); padding: 1.5rem;">
                     <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ef4444; margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> Zone de danger</h2>
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">La suppression de votre compte effacera l'intégralité de vos données de manière définitive. Cette action ne peut pas être annulée.</p>
-                    <form action="/settings" method="post" onsubmit="return confirm('Êtes-vous absolument sûr de vouloir supprimer votre compte ? Cette action est définitive et irréversible.')">
+                    <form action="/settings" method="post">
                         <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                         <input type="hidden" name="action" value="delete">
                         <button type="submit" class="btn-submit-creator btn-danger" style="width: auto;">
@@ -169,32 +169,5 @@
             </section>
         </div>
     </main>
-
-    <script>
-        const group = document.getElementById('genresCheckboxGroup');
-        const selected = group.getAttribute('data-selected');
-        if (selected) {
-            const list = selected.split(',');
-            const checkboxes = group.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(cb => {
-                if (list.includes(cb.value)) {
-                    cb.checked = true;
-                }
-            });
-        }
-
-        const selectInst = document.getElementById('favInstrumentSelect');
-        const selectedInst = selectInst.getAttribute('data-selected');
-        if (selectedInst) {
-            selectInst.value = selectedInst;
-        }
-
-        const selectTheme = document.getElementById('profileThemeSelect');
-        const selectedTheme = selectTheme.getAttribute('data-selected');
-        if (selectedTheme) {
-            selectTheme.value = selectedTheme;
-        }
-    </script>
 </body>
-
 </html>

@@ -99,9 +99,11 @@ func PostDetail(w http.ResponseWriter, r *http.Request) {
 		authorPp = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTNud3o0NzV1eHZkOGl4ZmhmcDJycWNndTNmODcxdDZoMWY3ZTd3aCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GeG3Ulpo8WrwpNMpUz/giphy.gif"
 	}
 
+	csrfToken := GetOrCreateCSRFToken(w, r)
+
 	const queryComments = `SELECT comments.id, comments.content, comments.created_at, comments.author_id, users.username, users.pp_url, comments.parent_id FROM comments INNER JOIN users ON comments.author_id = users.id WHERE comments.post_id = ? ORDER BY comments.created_at ASC`
 	rows, err := db.DB.Query(queryComments, postID)
-	var comments []map[string]any
+	var allComments []map[string]any
 	if err == nil {
 		defer rows.Close()
 		for rows.Next() {
@@ -129,7 +131,7 @@ func PostDetail(w http.ResponseWriter, r *http.Request) {
 					parentIDVal = int(cParentID.Int64)
 				}
 
-				comments = append(comments, map[string]any{
+				allComments = append(allComments, map[string]any{
 					"id":             cID,
 					"content":        cContent,
 					"created_at":     cCreatedAt,
@@ -140,12 +142,33 @@ func PostDetail(w http.ResponseWriter, r *http.Request) {
 					"dislikes_count": cDislikesCount,
 					"user_vote":      cUserVote,
 					"parent_id":      parentIDVal,
+					"replies":        []map[string]any{},
+					"IsLogged":       isLogged,
+					"CSRFToken":      csrfToken,
+					"PostID":         postID,
 				})
 			}
 		}
 	}
 
-	csrfToken := GetOrCreateCSRFToken(w, r)
+	commentMap := make(map[int]map[string]any)
+	for _, c := range allComments {
+		commentMap[c["id"].(int)] = c
+	}
+
+	var rootComments []map[string]any
+	for _, c := range allComments {
+		parentID := c["parent_id"].(int)
+		if parentID != 0 {
+			if parent, exists := commentMap[parentID]; exists {
+				parent["replies"] = append(parent["replies"].([]map[string]any), c)
+			} else {
+				rootComments = append(rootComments, c)
+			}
+		} else {
+			rootComments = append(rootComments, c)
+		}
+	}
 
 	data := map[string]any{
 		"IsLogged":       isLogged,
@@ -162,7 +185,8 @@ func PostDetail(w http.ResponseWriter, r *http.Request) {
 		"LikesCount":     likesCount,
 		"DislikesCount":  dislikesCount,
 		"UserVote":       userVote,
-		"Comments":       comments,
+		"Comments":       rootComments,
+		"CommentsCount":  len(allComments),
 		"IsAuthor":       isLogged && authorID == userData.ID,
 		"CSRFToken":      csrfToken,
 	}

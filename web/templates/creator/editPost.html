@@ -68,8 +68,16 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="tags">Tags (séparés par des virgules)</label>
-                        <input class="inputText" id="tags" name="tags" value="{{.Tags}}" placeholder="Tags" type="text" />
+                        <label>Sélectionner des tags</label>
+                        <div id="genresCheckboxGroup" data-selected="{{.Tags}}" class="checkbox-grid" style="max-height: 200px; overflow-y: auto; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.01);">
+                            {{range .AllTags}}
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="tags" value="{{.}}"> {{.}}
+                            </label>
+                            {{else}}
+                            <p style="color: var(--text-muted); font-size: 0.95rem;">Aucun tag disponible.</p>
+                            {{end}}
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -84,6 +92,19 @@
             </section>
         </div>
     </main>
+    <script>
+        const group = document.getElementById('genresCheckboxGroup');
+        const selected = group.getAttribute('data-selected');
+        if (selected) {
+            const list = selected.split(',');
+            const checkboxes = group.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                if (list.includes(cb.value)) {
+                    cb.checked = true;
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>

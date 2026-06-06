@@ -4,6 +4,7 @@ import (
 	"github.com/WayeNot/forum-project/internal/db"
 	"github.com/WayeNot/forum-project/internal/templates"
 	"net/http"
+	"strings"
 )
 
 type PostData struct {
@@ -43,20 +44,28 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		err = r.ParseForm()
+		if err != nil {
+			templates.Render("creator/createPost", w, map[string]any{"Error": "Formulaire invalide", "CSRFToken": csrfToken, "Tags": getAllTags()})
+			return
+		}
+
 		postData.Title = r.FormValue("title")
 		postData.Description = r.FormValue("description")
 		postData.Image_url = r.FormValue("media")
-		postData.Tags = r.FormValue("tags")
+		
+		selectedTags := r.Form["tags"]
+		postData.Tags = strings.Join(selectedTags, ",")
 
 		if postData.Title == "" || postData.Description == "" {
-			templates.Render("creator/createPost", w, map[string]any{"Error": "Le titre et la description sont requis", "CSRFToken": csrfToken})
+			templates.Render("creator/createPost", w, map[string]any{"Error": "Le titre et la description sont requis", "CSRFToken": csrfToken, "Tags": getAllTags()})
 			return
 		}
 
 		const insertPost = `INSERT INTO posts (title, description, author_id, image_url, tags) VALUES (?, ?, ?, ?, ?)`
 		_, err := db.DB.Exec(insertPost, postData.Title, postData.Description, postData.Author_id, postData.Image_url, postData.Tags)
 		if err != nil {
-			templates.Render("creator/createPost", w, map[string]any{"Error": "Erreur lors de la création du post", "CSRFToken": csrfToken})
+			templates.Render("creator/createPost", w, map[string]any{"Error": "Erreur lors de la création du post", "CSRFToken": csrfToken, "Tags": getAllTags()})
 			return
 		}
 
@@ -64,5 +73,5 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templates.Render("creator/createPost", w, map[string]any{"CSRFToken": csrfToken})
+	templates.Render("creator/createPost", w, map[string]any{"CSRFToken": csrfToken, "Tags": getAllTags()})
 }

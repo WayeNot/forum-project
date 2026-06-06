@@ -331,10 +331,18 @@ func EditPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		err = r.ParseForm()
+		if err != nil {
+			templates.ErrorPage(w, http.StatusBadRequest, "Formulaire invalide.")
+			return
+		}
+
 		title = r.FormValue("title")
 		description = r.FormValue("description")
 		imageURL = r.FormValue("media")
-		tagsStr = r.FormValue("tags")
+		
+		selectedTags := r.Form["tags"]
+		tagsStr = strings.Join(selectedTags, ",")
 
 		if title == "" || description == "" {
 			data := map[string]any{
@@ -344,6 +352,7 @@ func EditPost(w http.ResponseWriter, r *http.Request) {
 				"Description": description,
 				"ImageURL":    imageURL,
 				"Tags":        tagsStr,
+				"AllTags":     getAllTags(),
 				"CSRFToken":   csrfToken,
 			}
 			templates.Render("creator/editPost", w, data)
@@ -367,6 +376,7 @@ func EditPost(w http.ResponseWriter, r *http.Request) {
 		"Description": description,
 		"ImageURL":    imageURL,
 		"Tags":        tagsStr,
+		"AllTags":     getAllTags(),
 		"CSRFToken":   csrfToken,
 	}
 

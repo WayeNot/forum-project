@@ -68,8 +68,16 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="tags">Tags (séparés par des virgules)</label>
-                        <input class="inputText" id="tags" name="tags" placeholder="Ex: electro, rock, daftpunk" type="text" />
+                        <label>Sélectionner des tags</label>
+                        <div class="checkbox-grid" style="max-height: 200px; overflow-y: auto; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.01);">
+                            {{range .Tags}}
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="tags" value="{{.}}"> {{.}}
+                            </label>
+                            {{else}}
+                            <p style="color: var(--text-muted); font-size: 0.95rem;">Aucun tag disponible. Veuillez d'abord en <a href="/createTag" style="color: var(--accent-color);">créer un</a>.</p>
+                            {{end}}
+                        </div>
                     </div>
                     
                     <div class="form-group">

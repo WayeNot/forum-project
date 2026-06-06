@@ -5,74 +5,147 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum Plus - Accueil</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=1">
-    <link rel="stylesheet" href="/static/css/home.css?v=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+    <link rel="stylesheet" href="/static/css/style.css?v=2">
+    <link rel="stylesheet" href="/static/css/home.css?v=2">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
-    <main>
-        <sidebar id="sidebar">
-            <h2>Tout les tags: </h2>
-            <div class="tag-list">
-                {{range .Tags}}
-                <a href="/?tag={{.}}" class="tag-item">#{{.}}</a>
-                {{end}}
+    <main class="main-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <i class="fa-solid fa-comments"></i>
+                    <span>ForumPlus</span>
+                </a>
             </div>
-        </sidebar>
-        <div>
-            <nav>
-                <a href="/"><i class="fa-solid fa-house text-lg"></i></a>
-                {{if .IsLogged}}
-                <a href="/createPost"><i class="fa-solid fa-circle-plus"></i></a>
-                <a href="/createTag"><i class="fa-solid fa-tag"></i></a>
-                <a href="/messages"><i class="fa-solid fa-comment-dots text-lg"></i></a>
-                <a href="/profile"><i class="fa-solid fa-user-gear text-lg"></i></a>
-                <a href="/logout"><i class="fa-solid fa-right-from-bracket text-lg"></i></a>
-                {{else}}
-                <a href="/login"><i class="fa-solid fa-person-circle-plus"></i></a>
-                {{end}}
-                {{if .Error}}
-                <p style="color: red;">{{.Error}}</p>
-                {{end}}
+            
+            <div class="sidebar-section">
+                <h3><i class="fa-solid fa-hashtag"></i> Catégories</h3>
+                <div class="tag-list">
+                    <a href="/" class="tag-item {{if eq .CurrentTag ""}}active{{end}}">
+                        <span class="tag-hash">#</span> Tous les posts
+                    </a>
+                    {{range .Tags}}
+                    <a href="/?tag={{.}}" class="tag-item {{if eq $.CurrentTag .}}active{{end}}">
+                        <span class="tag-hash">#</span> {{.}}
+                    </a>
+                    {{end}}
+                </div>
+            </div>
+
+            {{if .IsLogged}}
+            <div class="sidebar-user-card">
+                <img src="{{.UserData.PpURL}}" alt="Photo de profil" class="user-card-avatar">
+                <div class="user-card-info">
+                    <span class="user-card-name">{{.UserData.Username}}</span>
+                    <span class="user-card-email">{{.UserData.Mail}}</span>
+                </div>
+            </div>
+            {{end}}
+        </aside>
+
+        <div class="content-area">
+            <nav class="navbar">
+                <a href="/" class="nav-brand-mobile"><i class="fa-solid fa-comments"></i></a>
+                <div class="nav-links">
+                    <a href="/" class="active"><i class="fa-solid fa-house"></i> <span>Accueil</span></a>
+                    {{if .IsLogged}}
+                    <a href="/createPost"><i class="fa-solid fa-circle-plus"></i> <span>Créer</span></a>
+                    <a href="/createTag"><i class="fa-solid fa-tag"></i> <span>Créer Tag</span></a>
+                    <a href="/logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> <span>Déconnexion</span></a>
+                    {{else}}
+                    <a href="/login" class="login-btn"><i class="fa-solid fa-right-from-bracket"></i> <span>Connexion</span></a>
+                    {{end}}
+                </div>
             </nav>
+
             <section class="post-container">
-                {{if .Posts}}
-                <h2 class="post-count">Posts récents ( {{len .Posts}} {{if eq (len .Posts)
-                    1}}post{{else}}posts{{end}} )
-                </h2>
-                {{else}}
-                <h2 class="post-count">Aucun post</h2>
-                {{end}}
+                <div class="feed-tabs" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+                    <a href="/" class="feed-tab {{if eq .Filter ""}}active{{end}}" style="color: var(--text-secondary); font-weight: 600; text-decoration: none; padding: 0.5rem 1rem; border-radius: var(--radius-md); transition: all 0.2s ease; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-fire"></i> Récents
+                    </a>
+                    {{if .IsLogged}}
+                    <a href="/?filter=created" class="feed-tab {{if eq .Filter "created"}}active{{end}}" style="color: var(--text-secondary); font-weight: 600; text-decoration: none; padding: 0.5rem 1rem; border-radius: var(--radius-md); transition: all 0.2s ease; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-user-pen"></i> Mes créations
+                    </a>
+                    <a href="/?filter=liked" class="feed-tab {{if eq .Filter "liked"}}active{{end}}" style="color: var(--text-secondary); font-weight: 600; text-decoration: none; padding: 0.5rem 1rem; border-radius: var(--radius-md); transition: all 0.2s ease; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-heart"></i> Likés
+                    </a>
+                    {{end}}
+                </div>
+
+                <div class="feed-header">
+                    {{if .CurrentTag}}
+                    <div class="filter-badge">
+                        Filtré par : <span>#{{.CurrentTag}}</span>
+                        <a href="/" class="clear-filter" title="Enlever le filtre"><i class="fa-solid fa-xmark"></i></a>
+                    </div>
+                    {{end}}
+                    
+                    {{if .Posts}}
+                    <h2 class="post-count">
+                        <i class="fa-solid fa-newspaper"></i> 
+                        {{len .Posts}} {{if eq (len .Posts) 1}}post récent{{else}}posts récents{{end}}
+                    </h2>
+                    {{else}}
+                    <h2 class="post-count"><i class="fa-solid fa-folder-open"></i> Aucun post trouvé</h2>
+                    {{end}}
+                </div>
+
                 {{if .Posts}}
                 <div class="post-grid">
                     {{range .Posts}}
-                    <div class="post-card">
-                        <div class="post-card-header">
-                            <a href="/profile/@{{.author_name}}" class="auth">
-                                <img src="{{.author_pp}}" alt="Photo de profil de {{.author_name}}" class="auth-pp">
-                                <p>{{.author_name}}</p>
-                            </a>
-                            <p class="post-card-ago">Il y a {{.time_ago}}</p>
-                        </div>
+                    <article class="post-card">
+                        <header class="post-card-header">
+                            <div class="author-info">
+                                <img src="{{.author_pp}}" alt="Photo de profil" class="auth-pp">
+                                <div class="author-meta">
+                                    <span class="author-name">{{.author_name}}</span>
+                                    <span class="post-card-ago"><i class="fa-regular fa-clock"></i> Il y a {{.time_ago}}</span>
+                                </div>
+                            </div>
+                        </header>
+                        
                         <div class="post-card-content">
-                            <p class="post-card-title">{{.title}}</p>
+                            <a href="/post/{{.id}}" style="color: inherit; text-decoration: none;">
+                                <h3 class="post-card-title">{{.title}}</h3>
+                            </a>
                             <p class="post-card-description">{{.description}}</p>
+                            
                             {{if .image_url}}
-                            <img src="{{.image_url}}" alt="Image du post" class="post-card-image">
+                            <div class="post-card-image-wrapper">
+                                <a href="/post/{{.id}}">
+                                    <img src="{{.image_url}}" alt="Image du post" class="post-card-image">
+                                </a>
+                            </div>
                             {{end}}
+                            
+                            {{if .tags}}
                             <div class="post-card-tags">
                                 {{range .tags}}
                                 <a href="/?tag={{.}}" class="post-tag">#{{.}}</a>
                                 {{end}}
                             </div>
-                            <div class="post-card-actions">
-                                <a href="/post/{{.id}}" class="post-link">Voir le post</a>
+                            {{end}}
+
+                            <div style="display: flex; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 0.5rem; justify-content: space-between; align-items: center;">
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <a href="/post/like?id={{.id}}" class="post-tag {{if eq .user_vote 1}}active{{end}}" style="display: flex; align-items: center; gap: 0.35rem; text-decoration: none;">
+                                        <i class="fa-solid fa-thumbs-up"></i> {{.likes_count}}
+                                    </a>
+                                    <a href="/post/dislike?id={{.id}}" class="post-tag {{if eq .user_vote -1}}active{{end}}" style="display: flex; align-items: center; gap: 0.35rem; text-decoration: none; color: #ef4444;">
+                                        <i class="fa-solid fa-thumbs-down"></i> {{.dislikes_count}}
+                                    </a>
+                                </div>
+                                
+                                <a href="/post/{{.id}}" class="post-tag" style="display: flex; align-items: center; gap: 0.35rem; text-decoration: none;">
+                                    <i class="fa-solid fa-comment"></i> {{.comment_count}} {{if eq .comment_count 1}}commentaire{{else}}commentaires{{end}}
+                                </a>
                             </div>
                         </div>
-                    </div>
+                    </article>
                     {{end}}
                 </div>
                 {{end}}

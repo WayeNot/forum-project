@@ -22,7 +22,16 @@ func main() {
 	http.HandleFunc("/logout", handlers.Logout)
 	http.HandleFunc("/createPost", handlers.CreatePost)
 	http.HandleFunc("/createTag", handlers.CreateTag)
-	
+
+	http.HandleFunc("/post/", handlers.PostDetail)
+	http.HandleFunc("/post/like", handlers.LikePost)
+	http.HandleFunc("/post/dislike", handlers.DislikePost)
+	http.HandleFunc("/post/comment", handlers.CommentPost)
+	http.HandleFunc("/comment/like", handlers.LikeComment)
+	http.HandleFunc("/comment/dislike", handlers.DislikeComment)
+	http.HandleFunc("/post/edit", handlers.EditPost)
+	http.HandleFunc("/post/delete", handlers.DeletePost)
+
 	fmt.Printf("✅ Serveur lancé sur http://localhost%s\n", port)
 	http.ListenAndServe(port, nil)
 }

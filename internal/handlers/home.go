@@ -10,6 +10,7 @@ import (
 )
 
 type UserData struct {
+	ID       int
 	Username string
 	Mail     string
 	Banner   string
@@ -19,15 +20,22 @@ type UserData struct {
 
 func getAllTags() []string {
 	const queryTags = `SELECT name FROM tags`
-	var allTagsStr string
-	err := db.DB.QueryRow(queryTags).Scan(&allTagsStr)
+	rows, err := db.DB.Query(queryTags)
 	if err != nil {
 		println(err.Error())
-	}
-	if allTagsStr == "" {
 		return []string{}
 	}
-	allTags := strings.Split(allTagsStr, ",")
+	defer rows.Close()
+
+	var allTags []string
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			println(err.Error())
+			continue
+		}
+		allTags = append(allTags, name)
+	}
 	return allTags
 }
 
@@ -40,32 +48,39 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	var userData UserData
 
 	session, err := r.Cookie("session_id")
-
 	if err == nil && session.Value != "" {
 		var user_id int
 		const requestUserId = `SELECT user_id FROM sessions WHERE session_id = ? LIMIT 1`
 		cleanSessionValue := strings.TrimSpace(session.Value)
 		err = db.DB.QueryRow(requestUserId, cleanSessionValue).Scan(&user_id)
 
-		if err != nil {
-			println(err.Error())
-		} else {
-			const requestUser = `SELECT username, mail, banner, pp_url, bio FROM users WHERE id = ?`
-			err = db.DB.QueryRow(requestUser, user_id).Scan(&userData.Username, &userData.Mail, &userData.Banner, &userData.PpURL, &userData.Bio)
-
-			if err != nil {
-				println(err.Error())
+		if err == nil {
+			const requestUser = `SELECT id, username, mail, banner, pp_url, bio FROM users WHERE id = ?`
+			err = db.DB.QueryRow(requestUser, user_id).Scan(&userData.ID, &userData.Username, &userData.Mail, &userData.Banner, &userData.PpURL, &userData.Bio)
+			if err == nil {
+				isLogged = true
 			}
-			isLogged = true
 		}
 	}
 
+	filter := r.URL.Query().Get("filter")
+	if (filter == "created" || filter == "liked") && !isLogged {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	tagFilter := strings.TrimSpace(r.URL.Query().Get("tag"))
+
 	const postsQuery = `SELECT posts.id, posts.title, posts.description, posts.author_id, posts.image_url, posts.tags, posts.created_at, users.username FROM posts INNER JOIN users ON posts.author_id = users.id ORDER BY posts.created_at DESC`
 	rows, err := db.DB.Query(postsQuery)
-
 	if err != nil {
 		println(err.Error())
 	}
+	defer func() {
+		if rows != nil {
+			rows.Close()
+		}
+	}()
 
 	rowsData := []map[string]any{}
 
@@ -78,15 +93,57 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		var createdAt string
 
 		err = rows.Scan(&id, &title, &description, &authorID, &imageURL, &tagsStr, &createdAt, &authorName)
-
 		if err != nil {
 			println(err.Error())
+			continue
 		}
 
 		if tagsStr != "" {
-			tags = strings.Split(tagsStr, ",")
+			rawTags := strings.Split(tagsStr, ",")
+			tags = make([]string, 0, len(rawTags))
+			for _, t := range rawTags {
+				trimmed := strings.TrimSpace(t)
+				if trimmed != "" {
+					tags = append(tags, trimmed)
+				}
+			}
 		} else {
 			tags = []string{}
+		}
+
+		if tagFilter != "" {
+			found := false
+			for _, t := range tags {
+				if strings.EqualFold(t, tagFilter) {
+					found = true
+					break
+				}
+			}
+			if !found {
+				continue
+			}
+		}
+
+		if filter == "created" && authorID != userData.ID {
+			continue
+		}
+
+		var likesCount int
+		const queryLikes = `SELECT COUNT(*) FROM post_likes WHERE post_id = ? AND vote = 1`
+		_ = db.DB.QueryRow(queryLikes, id).Scan(&likesCount)
+
+		var dislikesCount int
+		const queryDislikes = `SELECT COUNT(*) FROM post_likes WHERE post_id = ? AND vote = -1`
+		_ = db.DB.QueryRow(queryDislikes, id).Scan(&dislikesCount)
+
+		userVote := 0
+		if isLogged {
+			const queryUserVote = `SELECT vote FROM post_likes WHERE post_id = ? AND user_id = ?`
+			_ = db.DB.QueryRow(queryUserVote, id, userData.ID).Scan(&userVote)
+		}
+
+		if filter == "liked" && userVote != 1 {
+			continue
 		}
 
 		getUserPpURL := func(userID int) string {
@@ -94,7 +151,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 			const queryPpURL = `SELECT pp_url FROM users WHERE id = ?`
 			err := db.DB.QueryRow(queryPpURL, userID).Scan(&ppURL)
 			if err != nil {
-				println(err.Error())
+				return "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTNud3o0NzV1eHZkOGl4ZmhmcDJycWNndTNmODcxdDZoMWY3ZTd3aCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GeG3Ulpo8WrwpNMpUz/giphy.gif"
 			}
 			return ppURL
 		}
@@ -116,31 +173,41 @@ func Home(w http.ResponseWriter, r *http.Request) {
 				return strconv.Itoa(hours) + " heure(s)"
 			} else {
 				days := timeAgo / 86400
-				return strconv.Itoa(days) + "  jours"
+				return strconv.Itoa(days) + " jours"
 			}
 		}
 
+		var commentCount int
+		const queryCommentCount = `SELECT COUNT(*) FROM comments WHERE post_id = ?`
+		_ = db.DB.QueryRow(queryCommentCount, id).Scan(&commentCount)
+
 		postData := map[string]any{
-			"id":          id,
-			"title":       title,
-			"description": description,
-			"author_id":   authorID,
-			"image_url":   imageURL,
-			"tags":        tags,
-			"created_at":  createdAt,
-			"time_ago":    updateTimeAgo(createdAt),
-			"author_name": authorName,
-			"author_pp":   getUserPpURL(authorID),
+			"id":             id,
+			"title":          title,
+			"description":    description,
+			"author_id":      authorID,
+			"image_url":      imageURL,
+			"tags":           tags,
+			"created_at":     createdAt,
+			"time_ago":       updateTimeAgo(createdAt),
+			"author_name":    authorName,
+			"author_pp":      getUserPpURL(authorID),
+			"likes_count":    likesCount,
+			"dislikes_count": dislikesCount,
+			"user_vote":      userVote,
+			"comment_count":  commentCount,
 		}
 
 		rowsData = append(rowsData, postData)
 	}
 
 	data := map[string]any{
-		"IsLogged": isLogged,
-		"UserData": userData,
-		"Posts":    rowsData,
-		"Tags":     getAllTags(),
+		"IsLogged":   isLogged,
+		"UserData":   userData,
+		"Posts":      rowsData,
+		"Tags":       getAllTags(),
+		"CurrentTag": tagFilter,
+		"Filter":     filter,
 	}
 
 	templates.Render("home", w, data)

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Créer un Post - ForumPlus</title>
+    <title>Modifier le Post - ForumPlus</title>
     <link rel="stylesheet" href="/static/css/style.css?v=2">
     <link rel="stylesheet" href="/static/css/creator.css?v=2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -21,8 +21,8 @@
         </nav>
 
         <section class="form-container">
-            <h2 class="form-title">Créer un nouveau post</h2>
-            <p class="form-subtitle">Partagez vos idées ou posez des questions avec la communauté.</p>
+            <h2 class="form-title">Modifier votre post</h2>
+            <p class="form-subtitle">Mettez à jour le contenu de votre publication.</p>
 
             {{if .Error}}
             <div class="form-error">
@@ -30,29 +30,29 @@
             </div>
             {{end}}
 
-            <form id="createPost" action="/createPost" method="post">
+            <form id="editPost" action="/post/edit?id={{.PostID}}" method="post">
                 <div class="form-group">
                     <label for="title">Titre du poste</label>
-                    <input class="inputText" id="title" required name="title" placeholder="Ex: Comment débuter en Go ?" type="text" />
+                    <input class="inputText" id="title" required name="title" value="{{.Title}}" placeholder="Titre" type="text" />
                 </div>
                 
                 <div class="form-group">
                     <label for="description">Description / Contenu</label>
-                    <textarea name="description" id="description" class="textarea" placeholder="Rédigez le contenu de votre post ici..."></textarea>
+                    <textarea name="description" id="description" class="textarea" placeholder="Contenu">{{.Description}}</textarea>
                 </div>
                 
                 <div class="form-group">
                     <label for="tags">Tags</label>
-                    <input class="inputText" id="tags" name="tags" placeholder="Ex: go, sqlite, backend (séparés par des virgules)" type="text" />
+                    <input class="inputText" id="tags" name="tags" value="{{.Tags}}" placeholder="Tags séparés par des virgules" type="text" />
                 </div>
                 
                 <div class="form-group">
                     <label for="media">Lien de l'image (optionnel)</label>
-                    <input class="inputText" id="media" name="media" placeholder="Ex: https://image.url/pic.jpg" type="text" />
+                    <input class="inputText" id="media" name="media" value="{{.ImageURL}}" placeholder="URL de l'image" type="text" />
                 </div>
 
                 <button type="submit" class="btn-submit-creator">
-                    <i class="fa-solid fa-paper-plane"></i> Publier le poste
+                    <i class="fa-solid fa-save"></i> Enregistrer les modifications
                 </button>
             </form>
         </section>

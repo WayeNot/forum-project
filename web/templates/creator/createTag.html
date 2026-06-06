@@ -4,31 +4,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forum Plus - Accueil</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=1">
+    <title>Créer un Tag - ForumPlus</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=2">
     <link rel="stylesheet" href="/static/css/creator.css?v=2">
-    <link rel="stylesheet" href="/static/css/home.css?v=2">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
     <main>
-        <nav>
-            <a href="/"><i class="fa-solid fa-house text-lg"></i></a>
-            <a href="/createPost"><i class="fa-solid fa-circle-plus"></i></a>
-            <a href="/messages"><i class="fa-solid fa-comment-dots text-lg"></i></a>
-            <a href="/profile"><i class="fa-solid fa-user-gear text-lg"></i></a>
-            <a href="/logout"><i class="fa-solid fa-right-from-bracket text-lg"></i></a>
+        <nav class="navbar">
+            <a href="/" style="margin-right: auto; font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"><i class="fa-solid fa-comments"></i> ForumPlus</a>
+            <div class="nav-links">
+                <a href="/"><i class="fa-solid fa-house"></i> <span>Accueil</span></a>
+            </div>
         </nav>
-        <section>
+
+        <section class="form-container">
+            <h2 class="form-title">Créer un nouveau tag</h2>
+            <p class="form-subtitle">Ajoutez une nouvelle catégorie pour organiser les publications.</p>
+
+            {{if .Error}}
+            <div class="form-error">
+                <i class="fa-solid fa-triangle-exclamation"></i> {{.Error}}
+            </div>
+            {{end}}
+
             <form id="createTag" action="/createTag" method="post">
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <input class="inputText" required name="name" placeholder="Nom du tag" type="text" />
-                    <textarea name="description" class="textarea" placeholder="Description du tag"></textarea>
+                <div class="form-group">
+                    <label for="name">Nom du tag</label>
+                    <input class="inputText" id="name" required name="name" placeholder="Ex: golang" type="text" />
                 </div>
-                <button type="submit">Créer le tag</button>
+                
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea name="description" id="description" class="textarea" placeholder="Décrivez à quoi sert ce tag..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit-creator">
+                    <i class="fa-solid fa-plus"></i> Créer le tag
+                </button>
             </form>
         </section>
     </main>

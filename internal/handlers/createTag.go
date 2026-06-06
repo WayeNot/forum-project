@@ -16,17 +16,8 @@ func CreateTag(w http.ResponseWriter, r *http.Request) {
 	var postData TagData
 
 	session, err := r.Cookie("session_id")
-
-	if err != nil {
-		println("Erreur lors de la récupération du cookie de session")
-		println(err.Error())
-		templates.Render("/", w, r)
-		return
-	}
-
-	if session.Value == "" {
-		println("Vous devez être connecté pour créer un tag")
-		templates.Render("/", w, r)
+	if err != nil || session.Value == "" {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
@@ -36,7 +27,7 @@ func CreateTag(w http.ResponseWriter, r *http.Request) {
 
 		if postData.Name == "" || postData.Description == "" {
 			println("Le nom et la description sont requis")
-			templates.Render("creator/createTag", w, r)
+			templates.Render("creator/createTag", w, map[string]any{"Error": "Le nom et la description sont requis"})
 			return
 		}
 
@@ -46,12 +37,12 @@ func CreateTag(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			println(err.Error())
 			println("Erreur lors de la création du tag")
-			templates.Render("creator/createTag", w, r)
+			templates.Render("creator/createTag", w, map[string]any{"Error": "Erreur lors de la création du tag"})
 			return
 		}
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	templates.Render("creator/createTag", w, r)
+	templates.Render("creator/createTag", w, nil)
 }

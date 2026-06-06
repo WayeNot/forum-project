@@ -35,30 +35,34 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	}
 	postData.Author_id = user_id
 
+	csrfToken := GetOrCreateCSRFToken(w, r)
+
 	if r.Method == "POST" {
+		if !VerifyCSRFToken(r) {
+			http.Error(w, "Invalid CSRF Token", http.StatusForbidden)
+			return
+		}
+
 		postData.Title = r.FormValue("title")
 		postData.Description = r.FormValue("description")
 		postData.Image_url = r.FormValue("media")
 		postData.Tags = r.FormValue("tags")
 
 		if postData.Title == "" || postData.Description == "" {
-			println("Le titre et la description sont requis")
-			templates.Render("creator/createPost", w, map[string]any{"Error": "Le titre et la description sont requis"})
+			templates.Render("creator/createPost", w, map[string]any{"Error": "Le titre et la description sont requis", "CSRFToken": csrfToken})
 			return
 		}
 
 		const insertPost = `INSERT INTO posts (title, description, author_id, image_url, tags) VALUES (?, ?, ?, ?, ?)`
 		_, err := db.DB.Exec(insertPost, postData.Title, postData.Description, postData.Author_id, postData.Image_url, postData.Tags)
-
 		if err != nil {
-			println(err.Error())
-			println("Erreur lors de la création du post")
-			templates.Render("creator/createPost", w, map[string]any{"Error": "Erreur lors de la création du post"})
+			templates.Render("creator/createPost", w, map[string]any{"Error": "Erreur lors de la création du post", "CSRFToken": csrfToken})
 			return
 		}
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	templates.Render("creator/createPost", w, nil)
+
+	templates.Render("creator/createPost", w, map[string]any{"CSRFToken": csrfToken})
 }

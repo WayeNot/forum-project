@@ -1,36 +1,87 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Paramètres - ForumPlus</title>
-        <link rel="stylesheet" href="/static/css/style.css?v=2">
-        <link rel="stylesheet" href="/static/css/auth.css?v=2">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    </head>
 
-    <body>
-        <div class="auth-wrapper">
-            <div class="authForm">
-                <div style="text-align: center; margin-bottom: 1rem;">
-                    <a href="/" style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"><i class="fa-solid fa-comments"></i> ForumPlus</a>
-                </div>
-                
-                <h2 class="login-title">Paramètres</h2>
-                <p class="auth-subtitle">Gérez votre compte et vos préférences.</p>
-                
-                <form action="/settings" method="post" class="auth-form">
-                    <div class="input-group">
-                        <input class="form-input" name="bio" placeholder="Modifier votre Bio" type="text" />
-                    </div>
-                    
-                    <button type="submit" class="btn-submit">Sauvegarder <i class="fa-solid fa-save"></i></button>
-                    
-                    <div class="form-links">
-                        <a href="/" class="form-link">Retour à l'accueil</a>
-                    </div>
-                </form>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres - ForumPlus</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=2">
+    <link rel="stylesheet" href="/static/css/home.css?v=2">
+    <link rel="stylesheet" href="/static/css/creator.css?v=2">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <main class="main-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <i class="fa-solid fa-music"></i>
+                    <span>ForumPlus</span>
+                </a>
             </div>
+            
+            <div class="sidebar-section">
+                <a href="/" class="tag-item">
+                    <i class="fa-solid fa-arrow-left"></i> Retour à l'accueil
+                </a>
+            </div>
+
+            {{if .IsLogged}}
+            <div class="sidebar-user-card">
+                <img src="{{.UserData.PpURL}}" alt="Photo de profil" class="user-card-avatar">
+                <div class="user-card-info">
+                    <span class="user-card-name">{{.UserData.Username}}</span>
+                    <span class="user-card-email">{{.UserData.Mail}}</span>
+                </div>
+            </div>
+            {{end}}
+        </aside>
+
+        <div class="content-area">
+            <nav class="navbar">
+                <a href="/" class="nav-brand-mobile"><i class="fa-solid fa-music"></i></a>
+                <div class="nav-links">
+                    <a href="/"><i class="fa-solid fa-house"></i> <span>Accueil</span></a>
+                </div>
+            </nav>
+
+            <section class="form-container">
+                <h2 class="form-title">Paramètres du profil</h2>
+                <p class="form-subtitle">Personnalisez votre identité sur le forum musical.</p>
+
+                {{if .Error}}
+                <div class="form-error">
+                    <i class="fa-solid fa-triangle-exclamation"></i> {{.Error}}
+                </div>
+                {{end}}
+
+                <form id="settingsForm" action="/settings" method="post">
+                    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                    
+                    <div class="form-group">
+                        <label for="pp_url">URL de l'image de profil (Avatar)</label>
+                        <input class="inputText" id="pp_url" name="pp_url" value="{{.UserData.PpURL}}" placeholder="URL de l'avatar" type="text" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="banner">URL de l'image de bannière</label>
+                        <input class="inputText" id="banner" name="banner" value="{{.UserData.Banner}}" placeholder="URL de la bannière" type="text" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bio">Biographie / Description</label>
+                        <textarea name="bio" id="bio" class="textarea" placeholder="Partagez vos goûts musicaux, instruments joués, groupes favoris...">{{.UserData.Bio}}</textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit-creator">
+                        <i class="fa-solid fa-floppy-disk"></i> Enregistrer les paramètres
+                    </button>
+                </form>
+            </section>
         </div>
-    </body>
+    </main>
+</body>
+
 </html>

@@ -6,56 +6,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Créer un Post - ForumPlus</title>
     <link rel="stylesheet" href="/static/css/style.css?v=2">
+    <link rel="stylesheet" href="/static/css/home.css?v=2">
     <link rel="stylesheet" href="/static/css/creator.css?v=2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
-    <main>
-        <nav class="navbar">
-            <a href="/" style="margin-right: auto; font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"><i class="fa-solid fa-comments"></i> ForumPlus</a>
-            <div class="nav-links">
-                <a href="/"><i class="fa-solid fa-house"></i> <span>Accueil</span></a>
+    <main class="main-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <i class="fa-solid fa-music"></i>
+                    <span>ForumPlus</span>
+                </a>
             </div>
-        </nav>
-
-        <section class="form-container">
-            <h2 class="form-title">Créer un nouveau post</h2>
-            <p class="form-subtitle">Partagez vos idées ou posez des questions avec la communauté.</p>
-
-            {{if .Error}}
-            <div class="form-error">
-                <i class="fa-solid fa-triangle-exclamation"></i> {{.Error}}
+            
+            <div class="sidebar-section">
+                <a href="/" class="tag-item">
+                    <i class="fa-solid fa-arrow-left"></i> Retour à l'accueil
+                </a>
             </div>
-            {{end}}
+        </aside>
 
-            <form id="createPost" action="/createPost" method="post">
-                <div class="form-group">
-                    <label for="title">Titre du poste</label>
-                    <input class="inputText" id="title" required name="title" placeholder="Ex: Comment débuter en Go ?" type="text" />
+        <div class="content-area">
+            <nav class="navbar">
+                <a href="/" class="nav-brand-mobile"><i class="fa-solid fa-music"></i></a>
+                <div class="nav-links">
+                    <a href="/"><i class="fa-solid fa-house"></i> <span>Accueil</span></a>
                 </div>
-                
-                <div class="form-group">
-                    <label for="description">Description / Contenu</label>
-                    <textarea name="description" id="description" class="textarea" placeholder="Rédigez le contenu de votre post ici..."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="tags">Tags</label>
-                    <input class="inputText" id="tags" name="tags" placeholder="Ex: go, sqlite, backend (séparés par des virgules)" type="text" />
-                </div>
-                
-                <div class="form-group">
-                    <label for="media">Lien de l'image (optionnel)</label>
-                    <input class="inputText" id="media" name="media" placeholder="Ex: https://image.url/pic.jpg" type="text" />
-                </div>
+            </nav>
 
-                <button type="submit" class="btn-submit-creator">
-                    <i class="fa-solid fa-paper-plane"></i> Publier le poste
-                </button>
-            </form>
-        </section>
+            <section class="form-container">
+                <h2 class="form-title">Créer une nouvelle publication</h2>
+                <p class="form-subtitle">Partagez vos morceaux favoris, concerts ou théories musicales.</p>
+
+                {{if .Error}}
+                <div class="form-error">
+                    <i class="fa-solid fa-triangle-exclamation"></i> {{.Error}}
+                </div>
+                {{end}}
+
+                <form id="createPost" action="/createPost" method="post">
+                    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                    
+                    <div class="form-group">
+                        <label for="title">Titre du poste</label>
+                        <input class="inputText" id="title" required name="title" placeholder="Ex: Mon avis sur le dernier album de Daft Punk" type="text" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description / Contenu</label>
+                        <textarea name="description" id="description" class="textarea" placeholder="Exprimez-vous en musique..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tags">Tags</label>
+                        <input class="inputText" id="tags" name="tags" placeholder="Ex: electro, rock, album (séparés par des virgules)" type="text" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="media">Lien d'image ou pochette d'album</label>
+                        <input class="inputText" id="media" name="media" placeholder="Ex: https://image.url/cover.jpg" type="text" />
+                    </div>
+
+                    <button type="submit" class="btn-submit-creator">
+                        <i class="fa-solid fa-paper-plane"></i> Publier le poste
+                    </button>
+                </form>
+            </section>
+        </div>
     </main>
 </body>
 

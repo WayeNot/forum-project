@@ -32,6 +32,9 @@ func main() {
 	http.HandleFunc("/post/edit", handlers.EditPost)
 	http.HandleFunc("/post/delete", handlers.DeletePost)
 
+	http.HandleFunc("/user/", handlers.UserProfile)
+	http.HandleFunc("/settings", handlers.UserSettings)
+
 	fmt.Printf("✅ Serveur lancé sur http://localhost%s\n", port)
 	http.ListenAndServe(port, nil)
 }

@@ -6,56 +6,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier le Post - ForumPlus</title>
     <link rel="stylesheet" href="/static/css/style.css?v=2">
+    <link rel="stylesheet" href="/static/css/home.css?v=2">
     <link rel="stylesheet" href="/static/css/creator.css?v=2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
-    <main>
-        <nav class="navbar">
-            <a href="/" style="margin-right: auto; font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"><i class="fa-solid fa-comments"></i> ForumPlus</a>
-            <div class="nav-links">
-                <a href="/"><i class="fa-solid fa-house"></i> <span>Accueil</span></a>
+    <main class="main-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <i class="fa-solid fa-music"></i>
+                    <span>ForumPlus</span>
+                </a>
             </div>
-        </nav>
-
-        <section class="form-container">
-            <h2 class="form-title">Modifier votre post</h2>
-            <p class="form-subtitle">Mettez à jour le contenu de votre publication.</p>
-
-            {{if .Error}}
-            <div class="form-error">
-                <i class="fa-solid fa-triangle-exclamation"></i> {{.Error}}
+            
+            <div class="sidebar-section">
+                <a href="/" class="tag-item">
+                    <i class="fa-solid fa-arrow-left"></i> Retour à l'accueil
+                </a>
             </div>
-            {{end}}
+        </aside>
 
-            <form id="editPost" action="/post/edit?id={{.PostID}}" method="post">
-                <div class="form-group">
-                    <label for="title">Titre du poste</label>
-                    <input class="inputText" id="title" required name="title" value="{{.Title}}" placeholder="Titre" type="text" />
+        <div class="content-area">
+            <nav class="navbar">
+                <a href="/" class="nav-brand-mobile"><i class="fa-solid fa-music"></i></a>
+                <div class="nav-links">
+                    <a href="/"><i class="fa-solid fa-house"></i> <span>Accueil</span></a>
                 </div>
-                
-                <div class="form-group">
-                    <label for="description">Description / Contenu</label>
-                    <textarea name="description" id="description" class="textarea" placeholder="Contenu">{{.Description}}</textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="tags">Tags</label>
-                    <input class="inputText" id="tags" name="tags" value="{{.Tags}}" placeholder="Tags séparés par des virgules" type="text" />
-                </div>
-                
-                <div class="form-group">
-                    <label for="media">Lien de l'image (optionnel)</label>
-                    <input class="inputText" id="media" name="media" value="{{.ImageURL}}" placeholder="URL de l'image" type="text" />
-                </div>
+            </nav>
 
-                <button type="submit" class="btn-submit-creator">
-                    <i class="fa-solid fa-save"></i> Enregistrer les modifications
-                </button>
-            </form>
-        </section>
+            <section class="form-container">
+                <h2 class="form-title">Modifier votre publication</h2>
+                <p class="form-subtitle">Mettez à jour le contenu de votre post.</p>
+
+                {{if .Error}}
+                <div class="form-error">
+                    <i class="fa-solid fa-triangle-exclamation"></i> {{.Error}}
+                </div>
+                {{end}}
+
+                <form id="editPost" action="/post/edit?id={{.PostID}}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                    
+                    <div class="form-group">
+                        <label for="title">Titre du poste</label>
+                        <input class="inputText" id="title" required name="title" value="{{.Title}}" placeholder="Titre" type="text" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description / Contenu</label>
+                        <textarea name="description" id="description" class="textarea" placeholder="Contenu">{{.Description}}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tags">Tags</label>
+                        <input class="inputText" id="tags" name="tags" value="{{.Tags}}" placeholder="Tags séparés par des virgules" type="text" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="media">Lien de l'image (optionnel)</label>
+                        <input class="inputText" id="media" name="media" value="{{.ImageURL}}" placeholder="URL de l'image" type="text" />
+                    </div>
+
+                    <button type="submit" class="btn-submit-creator">
+                        <i class="fa-solid fa-save"></i> Enregistrer les modifications
+                    </button>
+                </form>
+            </section>
+        </div>
     </main>
 </body>
 

@@ -16,7 +16,7 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <a href="/" class="logo">
-                    <i class="fa-solid fa-comments"></i>
+                    <i class="fa-solid fa-music"></i>
                     <span>ForumPlus</span>
                 </a>
             </div>
@@ -28,24 +28,27 @@
             </div>
 
             {{if .IsLogged}}
-            <div class="sidebar-user-card">
-                <img src="{{.UserData.PpURL}}" alt="Photo de profil" class="user-card-avatar">
-                <div class="user-card-info">
-                    <span class="user-card-name">{{.UserData.Username}}</span>
-                    <span class="user-card-email">{{.UserData.Mail}}</span>
+            <a href="/user/@{{.UserData.Username}}" style="text-decoration: none; display: block; width: 100%;">
+                <div class="sidebar-user-card">
+                    <img src="{{.UserData.PpURL}}" alt="Photo de profil" class="user-card-avatar">
+                    <div class="user-card-info">
+                        <span class="user-card-name">{{.UserData.Username}}</span>
+                        <span class="user-card-email">{{.UserData.Mail}}</span>
+                    </div>
                 </div>
-            </div>
+            </a>
             {{end}}
         </aside>
 
         <div class="content-area">
             <nav class="navbar">
-                <a href="/" class="nav-brand-mobile"><i class="fa-solid fa-comments"></i></a>
+                <a href="/" class="nav-brand-mobile"><i class="fa-solid fa-music"></i></a>
                 <div class="nav-links">
                     <a href="/"><i class="fa-solid fa-house"></i> <span>Accueil</span></a>
                     {{if .IsLogged}}
                     <a href="/createPost"><i class="fa-solid fa-circle-plus"></i> <span>Créer</span></a>
                     <a href="/createTag"><i class="fa-solid fa-tag"></i> <span>Créer Tag</span></a>
+                    <a href="/settings" class="settings-btn" title="Paramètres"><i class="fa-solid fa-user-gear"></i> <span>Paramètres</span></a>
                     <a href="/logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> <span>Déconnexion</span></a>
                     {{else}}
                     <a href="/login" class="login-btn"><i class="fa-solid fa-right-from-bracket"></i> <span>Connexion</span></a>
@@ -55,13 +58,15 @@
 
             <article class="post-card" style="margin-bottom: 2rem;">
                 <header class="post-card-header">
-                    <div class="author-info">
-                        <img src="{{.AuthorPp}}" alt="Photo de profil" class="auth-pp">
-                        <div class="author-meta">
-                            <span class="author-name">{{.AuthorName}}</span>
-                            <span class="post-card-ago"><i class="fa-regular fa-clock"></i> Publié le {{.CreatedAt}}</span>
+                    <a href="/user/@{{.AuthorName}}" style="text-decoration: none; color: inherit;">
+                        <div class="author-info">
+                            <img src="{{.AuthorPp}}" alt="Photo de profil" class="auth-pp">
+                            <div class="author-meta">
+                                <span class="author-name">{{.AuthorName}}</span>
+                                <span class="post-card-ago"><i class="fa-regular fa-clock"></i> Publié le {{.CreatedAt}}</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                     
                     {{if .IsAuthor}}
                     <div style="display: flex; gap: 0.5rem;">
@@ -105,6 +110,7 @@
 
                 {{if .IsLogged}}
                 <form action="/post/comment" method="post" style="margin-bottom: 2rem; display: flex; flex-direction: column; gap: 1rem;">
+                    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                     <input type="hidden" name="post_id" value="{{.PostID}}">
                     <textarea name="content" required placeholder="Ajouter un commentaire constructif..." style="width: 100%; height: 5rem; padding: 0.75rem 1rem; border: 1px solid var(--border-color); background: rgba(255, 255, 255, 0.03); color: var(--text-primary); outline: none; border-radius: var(--radius-md); font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
                     <button type="submit" class="login-btn" style="border: none; padding: 0.625rem 1.25rem; border-radius: var(--radius-md); font-family: 'Outfit', sans-serif; font-weight: 700; cursor: pointer; align-self: flex-end;">Commenter</button>
@@ -119,11 +125,13 @@
                     {{range .Comments}}
                     <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <img src="{{.author_pp}}" alt="Profil" style="width: 28px; height: 28px; border-radius: var(--radius-sm); object-fit: cover;">
-                                <span style="font-weight: 600; font-size: 0.9rem; color: var(--text-primary);">{{.author_name}}</span>
-                                <span style="font-size: 0.75rem; color: var(--text-muted);"><i class="fa-regular fa-clock"></i> {{.created_at}}</span>
-                            </div>
+                            <a href="/user/@{{.author_name}}" style="text-decoration: none; color: inherit;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <img src="{{.author_pp}}" alt="Profil" style="width: 28px; height: 28px; border-radius: var(--radius-sm); object-fit: cover;">
+                                    <span style="font-weight: 600; font-size: 0.9rem; color: var(--text-primary);">{{.author_name}}</span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);"><i class="fa-regular fa-clock"></i> {{.created_at}}</span>
+                                </div>
+                            </a>
                         </div>
                         <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin-bottom: 0.5rem; white-space: pre-wrap; word-break: break-word;">{{.content}}</p>
                         

@@ -138,6 +138,8 @@ func PostDetail(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	csrfToken := GetOrCreateCSRFToken(w, r)
+
 	data := map[string]any{
 		"IsLogged":       isLogged,
 		"UserData":       userData,
@@ -154,6 +156,7 @@ func PostDetail(w http.ResponseWriter, r *http.Request) {
 		"UserVote":       userVote,
 		"Comments":       comments,
 		"IsAuthor":       isLogged && authorID == userData.ID,
+		"CSRFToken":      csrfToken,
 	}
 
 	templates.Render("postDetail", w, data)
@@ -214,6 +217,11 @@ func CommentPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "POST" {
+		if !VerifyCSRFToken(r) {
+			http.Error(w, "Invalid CSRF Token", http.StatusForbidden)
+			return
+		}
+
 		postIDStr := r.FormValue("post_id")
 		postID, err := strconv.Atoi(postIDStr)
 		if err != nil {
@@ -315,7 +323,14 @@ func EditPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	csrfToken := GetOrCreateCSRFToken(w, r)
+
 	if r.Method == "POST" {
+		if !VerifyCSRFToken(r) {
+			http.Error(w, "Invalid CSRF Token", http.StatusForbidden)
+			return
+		}
+
 		title = r.FormValue("title")
 		description = r.FormValue("description")
 		imageURL = r.FormValue("media")
@@ -329,6 +344,7 @@ func EditPost(w http.ResponseWriter, r *http.Request) {
 				"Description": description,
 				"ImageURL":    imageURL,
 				"Tags":        tagsStr,
+				"CSRFToken":   csrfToken,
 			}
 			templates.Render("creator/editPost", w, data)
 			return
@@ -351,6 +367,7 @@ func EditPost(w http.ResponseWriter, r *http.Request) {
 		"Description": description,
 		"ImageURL":    imageURL,
 		"Tags":        tagsStr,
+		"CSRFToken":   csrfToken,
 	}
 
 	templates.Render("creator/editPost", w, data)

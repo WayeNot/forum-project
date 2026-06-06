@@ -339,7 +339,10 @@ func EditPost(w http.ResponseWriter, r *http.Request) {
 
 		title = r.FormValue("title")
 		description = r.FormValue("description")
-		imageURL = r.FormValue("media")
+		imageURL = strings.TrimSpace(r.FormValue("media"))
+		if imageURL != "" && !strings.HasPrefix(imageURL, "http://") && !strings.HasPrefix(imageURL, "https://") {
+			imageURL = ""
+		}
 		
 		selectedTags := r.Form["tags"]
 		tagsStr = strings.Join(selectedTags, ",")

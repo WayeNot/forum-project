@@ -52,7 +52,10 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 		postData.Title = r.FormValue("title")
 		postData.Description = r.FormValue("description")
-		postData.Image_url = r.FormValue("media")
+		postData.Image_url = strings.TrimSpace(r.FormValue("media"))
+		if postData.Image_url != "" && !strings.HasPrefix(postData.Image_url, "http://") && !strings.HasPrefix(postData.Image_url, "https://") {
+			postData.Image_url = ""
+		}
 		
 		selectedTags := r.Form["tags"]
 		postData.Tags = strings.Join(selectedTags, ",")

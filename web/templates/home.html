@@ -47,7 +47,7 @@
     <main class="main-layout">
         <aside class="sidebar">
             <details class="sidebar-section" open>
-                <summary><h2><i class="fa-solid fa-compass" aria-hidden="true"></i> Navigation</h2></summary>
+                <summary><h2 style="margin-bottom: 15px; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-compass" aria-hidden="true"></i> Navigation</h2></summary>
                 <div class="tag-list" style="display: flex; flex-direction: column; width: 100%; gap: 0.5rem;">
                     <a href="/" class="tag-item {{if and (eq .Filter "") (eq .CurrentTag "")}}active{{end}}" style="width: 100%;">
                         <i class="fa-solid fa-fire" aria-hidden="true"></i> Récents
@@ -65,11 +65,8 @@
                     {{end}}
                 </div>
             </details>
-
-
-
             <details class="sidebar-section" open>
-                <summary><h2><i class="fa-solid fa-hashtag" aria-hidden="true"></i> Catégories</h2></summary>
+                <summary><h2 style="margin-bottom: 15px; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> Catégories</h2></summary>
                 <div class="tag-list" id="tagListContainer">
                     <a href="/" class="tag-item {{if eq .CurrentTag ""}}active{{end}} tag-item-selectable">
                         <span class="tag-hash">#</span> tous

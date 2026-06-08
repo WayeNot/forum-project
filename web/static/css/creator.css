@@ -10,6 +10,7 @@
 }
 
 .form-title {
+    text-align: center;
     font-family: 'Outfit', sans-serif;
     font-size: 1.75rem;
     font-weight: 800;
@@ -21,6 +22,7 @@
     color: var(--text-muted);
     font-size: 0.9rem;
     margin-bottom: 2rem;
+    text-align: center;
 }
 
 .form-group {

@@ -4,38 +4,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forum Plus</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=2">
-    <link rel="stylesheet" href="/static/css/auth.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta name="description" content="Rejoignez la communauté SoundPulse et échangez sur vos coups de cœur musicaux et instruments favoris.">
+    <title>Inscription - SoundPulse</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=3">
+    <link rel="stylesheet" href="/static/css/auth.css?v=3">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body>
-    <nav>
-        <a href="/"><i class="fa-solid fa-house-chimney"></i></a>
-    </nav>
-
-    <div class="overlay"></div>
-
-    <div class="auth">
-        <div class="authForm">
-            <h2 class="login-title">Inscription</h2>
-            <hr/>
-
+<body class="theme-default">
+    <div class="auth-wrapper">
+        <main class="authForm">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <a href="/" class="nav-logo" style="justify-content: center; font-size: 1.75rem;" aria-label="SoundPulse Accueil">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" width="36" height="36" style="fill: var(--accent-color);">
+                        <path d="M12 2a10 10 0 0 0-10 10v7a3 3 0 0 0 3 3h3v-8H5v-2a7 7 0 1 1 14 0v2h-3v8h3a3 3 0 0 0 3-3v-7A10 10 0 0 0 12 2zm-6 18H5a1 1 0 0 1-1-1v-5h2zm14-1a1 1 0 0 1-1 1h-1v-6h2z"/>
+                    </svg>
+                    <span>SoundPulse</span>
+                </a>
+            </div>
+            
+            <h1 class="login-title">Inscription</h1>
+            <p class="auth-subtitle">Créez votre compte SoundPulse et rejoignez la communauté.</p>
+            
+            {{if .Error}}
+            <div class="form-error" role="alert">
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> {{.Error}}
+            </div>
+            {{end}}
+            
             <form action="/register" method="post" class="auth-form">
                 <div class="input-group">
-                    <input name="username" class="form-input" required placeholder="Nom d'utilisateur" type="text" />
-                    <input name="mail" class="form-input" required placeholder="Adresse mail" type="mail" />
-                    <input name="password" class="form-input" required placeholder="Mot de passe" type="password" />
+                    <label for="username" class="sr-only">Nom d'utilisateur</label>
+                    <input name="username" id="username" class="form-input" required placeholder="Nom d'utilisateur" type="text" maxlength="55" aria-label="Nom d'utilisateur" />
+                    
+                    <label for="mail" class="sr-only">Adresse email</label>
+                    <input name="mail" id="mail" class="form-input" required placeholder="Adresse email" type="email" maxlength="55" aria-label="Adresse email" />
+                    
+                    <label for="password" class="sr-only">Mot de passe</label>
+                    <input name="password" id="password" class="form-input" required placeholder="Mot de passe" type="password" maxlength="100" aria-label="Mot de passe" />
                 </div>
-
-                <button type="submit" class="btn-submit">Continuer</button>
-
+                
+                <button type="submit" class="btn-submit">
+                    S'inscrire <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                </button>
+                
                 <div class="form-links">
-                    <a href="/login" class="form-link">Connexion</a>
+                    <span>Déjà membre ? </span>
+                    <a href="/login" class="form-link">Se connecter</a>
                 </div>
             </form>
-        </div>
+        </main>
     </div>
 </body>
 

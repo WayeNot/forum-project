@@ -1,41 +1,58 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Forum Plus</title>
-        <link rel="stylesheet" href="/static/css/style.css?v=2">
-        <link rel="stylesheet" href="/static/css/auth.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    </head>
 
-    <body>
-        <nav>
-            <a href="/"><i class="fa-solid fa-house-chimney"></i></a>
-        </nav>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Connectez-vous à votre compte SoundPulse pour participer aux discussions et partager votre passion musicale.">
+    <title>Connexion - SoundPulse</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=3">
+    <link rel="stylesheet" href="/static/css/auth.css?v=3">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
 
-        <div class="overlay"></div>
-
-        <div class="auth">
-            <div class="authForm">
-                <h2 class="login-title">Connexion</h2>
-                <hr/>
-                
-                <form action="/login" method="post" class="auth-form">
-                    <div class="input-group">
-                        <input required class="form-input" name="usernameOrMail" placeholder="Nom d'utilisateur / mail" type="text" maxlength="25" />
-                        <input required class="form-input input-password" name="password" placeholder="Mot de passe" type="password" maxlength="50" />
-                    </div>
-                    
-                    <button type="submit" class="btn-submit">Continuer</button>
-                    
-                    <div class="form-links">
-                        <a href="/passwordForgot" class="form-link">Mot de passe oublié ?</a>
-                        <p>|</p>
-                        <a href="/register" class="form-link">Inscription</a>
-                    </div>
-                </form>
+<body class="theme-default">
+    <div class="auth-wrapper">
+        <main class="authForm">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <a href="/" class="nav-logo" style="justify-content: center; font-size: 1.75rem;" aria-label="SoundPulse Accueil">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" width="36" height="36" style="fill: var(--accent-color);">
+                        <path d="M12 2a10 10 0 0 0-10 10v7a3 3 0 0 0 3 3h3v-8H5v-2a7 7 0 1 1 14 0v2h-3v8h3a3 3 0 0 0 3-3v-7A10 10 0 0 0 12 2zm-6 18H5a1 1 0 0 1-1-1v-5h2zm14-1a1 1 0 0 1-1 1h-1v-6h2z"/>
+                    </svg>
+                    <span>SoundPulse</span>
+                </a>
             </div>
-        </div>
-    </body>
+            
+            <h1 class="login-title">Connexion</h1>
+            <p class="auth-subtitle">Accédez à votre compte pour partager votre passion musicale.</p>
+            
+            {{if .Error}}
+            <div class="form-error" role="alert">
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> {{.Error}}
+            </div>
+            {{end}}
+            
+            <form action="/login" method="post" class="auth-form">
+                <div class="input-group">
+                    <label for="usernameOrMail" class="sr-only">Nom d'utilisateur ou adresse email</label>
+                    <input required class="form-input" id="usernameOrMail" name="usernameOrMail" placeholder="Nom d'utilisateur ou email" type="text" maxlength="55" aria-label="Nom d'utilisateur ou adresse email" />
+                    
+                    <label for="password" class="sr-only">Mot de passe</label>
+                    <input required class="form-input" id="password" name="password" placeholder="Mot de passe" type="password" maxlength="100" aria-label="Mot de passe" />
+                </div>
+                
+                <button type="submit" class="btn-submit">
+                    Se connecter <i class="fa-solid fa-arrow-right-to-bracket" aria-hidden="true"></i>
+                </button>
+                
+                <div class="form-links">
+                    <span>Nouveau sur SoundPulse ? </span>
+                    <a href="/register" class="form-link">Créer un compte</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</body>
+
 </html>

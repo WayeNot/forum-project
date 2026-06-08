@@ -22,7 +22,7 @@
                 <span>SoundPulse</span>
             </a>
             
-            <input type="checkbox" id="nav-toggle" class="nav-toggle-cb" style="display: none;">
+            <input type="checkbox" id="nav-toggle" class="nav-toggle-cb">
             <label for="nav-toggle" class="nav-toggle-label" aria-label="Menu de navigation">
                 <span></span>
                 <span></span>
@@ -47,7 +47,7 @@
     <main class="main-layout">
         <aside class="sidebar">
             <div class="sidebar-section">
-                <a href="/" class="tag-item" style="width: 100%;">
+                <a href="/" class="tag-item full-width">
                     <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Accueil
                 </a>
             </div>
@@ -64,64 +64,64 @@
         </aside>
 
         <div class="content-area">
-            <section style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 2rem; backdrop-filter: blur(12px); box-shadow: var(--shadow-md);">
+            <section class="profile-card">
                 {{if .TargetUser.Banner}}
-                <div style="height: 180px; background-image: url('{{.TargetUser.Banner}}'); background-size: cover; background-position: center; border-bottom: 1px solid var(--border-color);"></div>
+                <div class="profile-banner" style="background-image: url('{{.TargetUser.Banner}}');"></div>
                 {{else}}
-                <div style="height: 180px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(217, 70, 239, 0.15) 100%); border-bottom: 1px solid var(--border-color);"></div>
+                <div class="profile-banner-empty"></div>
                 {{end}}
 
-                <div style="padding: 2rem; position: relative;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: -6rem; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-                        <img src="{{.TargetUser.PpURL}}" alt="Avatar de {{.TargetUser.Username}}" width="110" height="110" style="width: 110px; height: 110px; border-radius: var(--radius-lg); object-fit: cover; border: 4px solid var(--bg-main); background: var(--bg-main); box-shadow: var(--shadow-md);">
+                <div class="profile-card-inner">
+                    <div class="profile-top-row">
+                        <img src="{{.TargetUser.PpURL}}" alt="Avatar de {{.TargetUser.Username}}" width="110" height="110" class="profile-avatar-big">
                         
                         {{if .IsSelf}}
-                        <a href="/settings" class="post-tag" style="background: var(--accent-gradient); color: #ffffff; border: none; padding: 0.6rem 1.25rem; font-family: 'Outfit', sans-serif; font-weight: 700; border-radius: var(--radius-md); text-decoration: none; box-shadow: var(--shadow-md);"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> Éditer le profil</a>
+                        <a href="/settings" class="profile-action"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> Éditer le profil</a>
                         {{end}}
                     </div>
 
-                    <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
-                        <h1 style="font-family: 'Outfit', sans-serif; font-size: 1.75rem; font-weight: 800; color: var(--text-primary);">@{{.TargetUser.Username}}</h1>
+                    <div class="profile-summary">
+                        <h1 class="profile-name">@{{.TargetUser.Username}}</h1>
                         {{if .TargetUser.CustomStatus}}
-                        <span style="background: rgba(6, 182, 212, 0.1); border: 1px solid var(--border-color); padding: 0.35rem 0.75rem; border-radius: var(--radius-round); font-size: 0.85rem; color: var(--accent-color); font-weight: 500;">
+                        <span class="profile-status-pill">
                             <i class="fa-solid fa-headphones" aria-hidden="true"></i> {{.TargetUser.CustomStatus}}
                         </span>
                         {{end}}
                     </div>
 
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;"><i class="fa-solid fa-envelope" aria-hidden="true"></i> {{.TargetUser.Mail}}</p>
+                    <p class="profile-meta-text"><i class="fa-solid fa-envelope" aria-hidden="true"></i> {{.TargetUser.Mail}}</p>
                     
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;">
-                        <div style="background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;">
-                            <h2 style="font-family: 'Outfit', sans-serif; font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 0.5rem;"><i class="fa-solid fa-address-card" aria-hidden="true"></i> Biographie</h2>
-                            <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap;">{{if .TargetUser.Bio}}{{.TargetUser.Bio}}{{else}}Cet utilisateur n'a pas encore rédigé de biographie.{{end}}</p>
+                    <div class="profile-info-grid">
+                        <div class="profile-stat-card">
+                            <h2 class="profile-stat-title"><i class="fa-solid fa-address-card" aria-hidden="true"></i> Biographie</h2>
+                            <p class="profile-stat-value">{{if .TargetUser.Bio}}{{.TargetUser.Bio}}{{else}}Cet utilisateur n'a pas encore rédigé de biographie.{{end}}</p>
                         </div>
                         
-                        <div style="background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                        <div class="profile-stat-card">
                             <div>
-                                <h2 style="font-family: 'Outfit', sans-serif; font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 0.25rem;"><i class="fa-solid fa-guitar" aria-hidden="true"></i> Instrument favori</h2>
-                                <p style="color: var(--text-secondary); font-size: 0.95rem; font-weight: 600;">
+                                <h2 class="profile-stat-title"><i class="fa-solid fa-guitar" aria-hidden="true"></i> Instrument favori</h2>
+                                <p class="profile-stat-value">
                                     {{if .TargetUser.FavoriteInstrument}}{{.TargetUser.FavoriteInstrument}}{{else}}Aucun spécifié{{end}}
                                 </p>
                             </div>
-                                <div id="genresContainer" style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
-                                    {{if .TargetUser.PreferredGenres}}
-                                        {{range (split .TargetUser.PreferredGenres ",")}}
-                                            {{if .}}
-                                            <span class="post-tag" style="background: rgba(6, 182, 212, 0.06); border-color: rgba(6, 182, 212, 0.2); color: var(--accent-color); font-weight: 500;">{{.}}</span>
-                                            {{end}}
+                            <div class="genre-tags">
+                                {{if .TargetUser.PreferredGenres}}
+                                    {{range (split .TargetUser.PreferredGenres ",")}}
+                                        {{if .}}
+                                        <span class="post-tag genre-tag">{{.}}</span>
                                         {{end}}
-                                    {{else}}
-                                        <span style="color: var(--text-muted); font-size: 0.95rem;">Aucun spécifié</span>
                                     {{end}}
-                                </div>
+                                {{else}}
+                                    <span class="empty-state-text">Aucun spécifié</span>
+                                {{end}}
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
             <section class="post-container">
-                <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem;"><i class="fa-solid fa-music" aria-hidden="true"></i> Publications de @{{.TargetUser.Username}} ({{len .Posts}})</h2>
+                <h2 class="profile-posts-title"><i class="fa-solid fa-music" aria-hidden="true"></i> Publications de @{{.TargetUser.Username}} ({{len .Posts}})</h2>
 
                 {{if .Posts}}
                 <div class="post-grid">
@@ -138,7 +138,7 @@
                         </header>
                         
                         <div class="post-card-content">
-                            <a href="/post/{{.id}}" style="color: inherit; text-decoration: none;" aria-label="Lire la publication {{.title}}">
+                            <a href="/post/{{.id}}" aria-label="Lire la publication {{.title}}">
                                 <h3 class="post-card-title">{{.title}}</h3>
                             </a>
                             <p class="post-card-description">{{.description}}</p>
@@ -159,17 +159,17 @@
                             </div>
                             {{end}}
 
-                            <div style="display: flex; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 0.5rem; justify-content: space-between; align-items: center;">
-                                <div style="display: flex; gap: 0.5rem;">
-                                    <a href="/post/like?id={{.id}}" class="post-tag {{if eq .user_vote 1}}active{{end}}" style="display: flex; align-items: center; gap: 0.35rem; text-decoration: none;" aria-label="Aimer ce post, {{.likes_count}} j'aime">
+                            <div class="post-card-actions">
+                                <div class="post-card-actions-group">
+                                    <a href="/post/like?id={{.id}}" class="post-tag post-card-action-link {{if eq .user_vote 1}}active{{end}}" aria-label="Aimer ce post, {{.likes_count}} j'aime">
                                         <i class="fa-solid fa-thumbs-up" aria-hidden="true"></i> {{.likes_count}}
                                     </a>
-                                    <a href="/post/dislike?id={{.id}}" class="post-tag {{if eq .user_vote -1}}active{{end}}" style="display: flex; align-items: center; gap: 0.35rem; text-decoration: none; color: #ef4444;" aria-label="Ne pas aimer ce post, {{.dislikes_count}} j'aime pas">
+                                    <a href="/post/dislike?id={{.id}}" class="post-tag post-card-action-link dislike {{if eq .user_vote -1}}active{{end}}" aria-label="Ne pas aimer ce post, {{.dislikes_count}} j'aime pas">
                                         <i class="fa-solid fa-thumbs-down" aria-hidden="true"></i> {{.dislikes_count}}
                                     </a>
                                 </div>
                                 
-                                <a href="/post/{{.id}}" class="post-tag" style="display: flex; align-items: center; gap: 0.35rem; text-decoration: none;" aria-label="Voir les commentaires, {{.comment_count}} commentaires">
+                                <a href="/post/{{.id}}" class="post-tag post-card-action-link" aria-label="Voir les commentaires, {{.comment_count}} commentaires">
                                     <i class="fa-solid fa-comment" aria-hidden="true"></i> {{.comment_count}}
                                 </a>
                             </div>
@@ -178,7 +178,7 @@
                     {{end}}
                 </div>
                 {{else}}
-                <p style="text-align: center; color: var(--text-muted); padding: 2rem;">Aucune publication pour le moment.</p>
+                <p class="empty-state-text">Aucune publication pour le moment.</p>
                 {{end}}
             </section>
         </div>

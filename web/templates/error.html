@@ -14,18 +14,18 @@
 
 <body class="theme-default">
     <div class="auth-wrapper">
-        <main class="authForm" style="text-align: center;">
-            <div style="font-size: 4rem; background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.5rem; display: flex; justify-content: center; align-items: center;">
-                <svg viewBox="0 0 24 24" aria-hidden="true" width="64" height="64" style="fill: var(--accent-color); animation: spin 4s linear infinite;">
+        <main class="authForm error-page">
+            <div class="error-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" width="64" height="64">
                     <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm1-13h-2v6h2zm0 8h-2v2h2z"/>
                 </svg>
             </div>
             
-            <h1 class="login-title" style="font-size: 2.5rem; margin-bottom: 1rem;">Erreur {{.StatusCode}}</h1>
-            <p class="auth-subtitle" style="font-size: 1.1rem; line-height: 1.6;">{{.Message}}</p>
+            <h1 class="login-title error-title">Erreur {{.StatusCode}}</h1>
+            <p class="auth-subtitle error-subtitle">{{.Message}}</p>
             
-            <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
-                <a href="/" class="btn-submit" style="text-decoration: none;">
+            <div class="error-actions">
+                <a href="/" class="btn-submit">
                     <i class="fa-solid fa-house" aria-hidden="true"></i> Retour à l'accueil
                 </a>
             </div>

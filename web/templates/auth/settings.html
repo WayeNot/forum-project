@@ -23,7 +23,7 @@
                 <span>SoundPulse</span>
             </a>
             
-            <input type="checkbox" id="nav-toggle" class="nav-toggle-cb" style="display: none;">
+            <input type="checkbox" id="nav-toggle" class="nav-toggle-cb">
             <label for="nav-toggle" class="nav-toggle-label" aria-label="Menu de navigation">
                 <span></span>
                 <span></span>
@@ -46,7 +46,7 @@
     <main class="main-layout">
         <aside class="sidebar">
             <div class="sidebar-section">
-                <a href="/user/@{{.UserData.Username}}" class="tag-item" style="width: 100%;">
+                <a href="/user/@{{.UserData.Username}}" class="tag-item full-width">
                     <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Retour au profil
                 </a>
             </div>
@@ -63,7 +63,7 @@
                 </div>
                 {{end}}
 
-                <form id="settingsForm" action="/settings" method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <form id="settingsForm" action="/settings" method="post" class="settings-form">
                     <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                     <input type="hidden" name="action" value="update">
                     
@@ -142,10 +142,10 @@
                         <textarea name="bio" id="bio" class="textarea" placeholder="Partagez vos artistes ou projets musicaux du moment...">{{.UserData.Bio}}</textarea>
                     </div>
 
-                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+                    <hr class="section-divider">
 
-                    <h2 class="form-title" style="font-size: 1.25rem;">Changer le mot de passe</h2>
-                    <p class="form-subtitle" style="font-size: 0.85rem; margin-bottom: 1rem;">Laissez vide si vous ne souhaitez pas modifier le mot de passe.</p>
+                    <h2 class="form-title section-title">Changer le mot de passe</h2>
+                    <p class="form-subtitle section-subtitle">Laissez vide si vous ne souhaitez pas modifier le mot de passe.</p>
 
                     <div class="form-group">
                         <label for="current_password">Mot de passe actuel</label>
@@ -162,15 +162,15 @@
                     </button>
                 </form>
 
-                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 2rem 0;">
+                <hr class="section-divider">
 
-                <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: var(--radius-md); padding: 1.5rem;">
-                    <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ef4444; margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> Zone de danger</h2>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">La suppression de votre compte effacera l'intégralité de vos données de manière définitive. Cette action ne peut pas être annulée.</p>
+                <div class="danger-card">
+                    <h2 class="danger-title"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> Zone de danger</h2>
+                    <p class="danger-text">La suppression de votre compte effacera l'intégralité de vos données de manière définitive. Cette action ne peut pas être annulée.</p>
                     <form action="/settings" method="post">
                         <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                         <input type="hidden" name="action" value="delete">
-                        <button type="submit" class="btn-submit-creator btn-danger" style="width: auto;">
+                        <button type="submit" class="btn-submit-creator btn-danger auto-width">
                             <i class="fa-solid fa-trash" aria-hidden="true"></i> Supprimer définitivement mon compte
                         </button>
                     </form>

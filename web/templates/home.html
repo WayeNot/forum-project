@@ -22,7 +22,7 @@
                 <span>SoundPulse</span>
             </a>
             
-            <input type="checkbox" id="nav-toggle" class="nav-toggle-cb" style="display: none;">
+            <input type="checkbox" id="nav-toggle" class="nav-toggle-cb">
             <label for="nav-toggle" class="nav-toggle-label" aria-label="Menu de navigation">
                 <span></span>
                 <span></span>
@@ -47,26 +47,26 @@
     <main class="main-layout">
         <aside class="sidebar">
             <details class="sidebar-section" open>
-                <summary><h2 style="margin-bottom: 15px; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-compass" aria-hidden="true"></i> Navigation</h2></summary>
-                <div class="tag-list" style="display: flex; flex-direction: column; width: 100%; gap: 0.5rem;">
-                    <a href="/" class="tag-item {{if and (eq .Filter "") (eq .CurrentTag "")}}active{{end}}" style="width: 100%;">
+                <summary><h2><i class="fa-solid fa-compass" aria-hidden="true"></i> Navigation</h2></summary>
+                <div class="tag-list vertical">
+                    <a href="/" class="tag-item full-width {{if and (eq .Filter "") (eq .CurrentTag "")}}active{{end}}">
                         <i class="fa-solid fa-fire" aria-hidden="true"></i> Récents
                     </a>
-                    <a href="/?filter=popular" class="tag-item {{if eq .Filter "popular"}}active{{end}}" style="width: 100%;">
+                    <a href="/?filter=popular" class="tag-item full-width {{if eq .Filter "popular"}}active{{end}}">
                         <i class="fa-solid fa-chart-line" aria-hidden="true"></i> Populaires
                     </a>
                     {{if .IsLogged}}
-                    <a href="/?filter=created" class="tag-item {{if eq .Filter "created"}}active{{end}}" style="width: 100%;">
+                    <a href="/?filter=created" class="tag-item full-width {{if eq .Filter "created"}}active{{end}}">
                         <i class="fa-solid fa-user-pen" aria-hidden="true"></i> Créations
                     </a>
-                    <a href="/?filter=liked" class="tag-item {{if eq .Filter "liked"}}active{{end}}" style="width: 100%;">
+                    <a href="/?filter=liked" class="tag-item full-width {{if eq .Filter "liked"}}active{{end}}">
                         <i class="fa-solid fa-heart" aria-hidden="true"></i> Likés
                     </a>
                     {{end}}
                 </div>
             </details>
             <details class="sidebar-section" open>
-                <summary><h2 style="margin-bottom: 15px; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> Catégories</h2></summary>
+                <summary><h2><i class="fa-solid fa-hashtag" aria-hidden="true"></i> Catégories</h2></summary>
                 <div class="tag-list" id="tagListContainer">
                     <a href="/" class="tag-item {{if eq .CurrentTag ""}}active{{end}} tag-item-selectable">
                         <span class="tag-hash">#</span> tous
@@ -80,7 +80,7 @@
             </details>
 
             {{if .IsLogged}}
-            <a href="/user/@{{.UserData.Username}}" style="text-decoration: none; display: block; width: 100%;" aria-label="Voir mon profil">
+            <a href="/user/@{{.UserData.Username}}" class="full-width-link" aria-label="Voir mon profil">
                 <div class="sidebar-user-card">
                     <img src="{{.UserData.PpURL}}" alt="Photo de profil de {{.UserData.Username}}" class="user-card-avatar" width="42" height="42">
                     <div class="user-card-info">
@@ -117,7 +117,7 @@
                     {{range .Posts}}
                     <article class="post-card">
                         <header class="post-card-header">
-                            <a href="/user/@{{.author_name}}" style="text-decoration: none; color: inherit;" aria-label="Profil de {{.author_name}}">
+                            <a href="/user/@{{.author_name}}" aria-label="Profil de {{.author_name}}">
                                 <div class="author-info">
                                     <img src="{{.author_pp}}" alt="Avatar de {{.author_name}}" class="auth-pp" width="40" height="40" loading="lazy">
                                     <div class="author-meta">
@@ -129,7 +129,7 @@
                         </header>
                         
                         <div class="post-card-content">
-                            <a href="/post/{{.id}}" style="color: inherit; text-decoration: none;" aria-label="Lire la publication {{.title}}">
+                            <a href="/post/{{.id}}" aria-label="Lire la publication {{.title}}">
                                 <h2 class="post-card-title">{{.title}}</h2>
                             </a>
                             <p class="post-card-description">{{.description}}</p>
@@ -150,17 +150,17 @@
                             </div>
                             {{end}}
 
-                            <div style="display: flex; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 0.5rem; justify-content: space-between; align-items: center;">
-                                <div style="display: flex; gap: 0.5rem;">
-                                    <a href="/post/like?id={{.id}}" class="post-tag {{if eq .user_vote 1}}active{{end}}" style="display: flex; align-items: center; gap: 0.35rem; text-decoration: none;" aria-label="Aimer ce post, {{.likes_count}} j'aime">
+                            <div class="post-card-actions">
+                                <div class="post-card-actions-group">
+                                    <a href="/post/like?id={{.id}}" class="post-tag post-card-action-link {{if eq .user_vote 1}}active{{end}}" aria-label="Aimer ce post, {{.likes_count}} j'aime">
                                         <i class="fa-solid fa-thumbs-up" aria-hidden="true"></i> {{.likes_count}}
                                     </a>
-                                    <a href="/post/dislike?id={{.id}}" class="post-tag {{if eq .user_vote -1}}active{{end}}" style="display: flex; align-items: center; gap: 0.35rem; text-decoration: none; color: #ef4444;" aria-label="Ne pas aimer ce post, {{.dislikes_count}} j'aime pas">
+                                    <a href="/post/dislike?id={{.id}}" class="post-tag post-card-action-link dislike {{if eq .user_vote -1}}active{{end}}" aria-label="Ne pas aimer ce post, {{.dislikes_count}} j'aime pas">
                                         <i class="fa-solid fa-thumbs-down" aria-hidden="true"></i> {{.dislikes_count}}
                                     </a>
                                 </div>
                                 
-                                <a href="/post/{{.id}}" class="post-tag" style="display: flex; align-items: center; gap: 0.35rem; text-decoration: none;" aria-label="Voir les commentaires, {{.comment_count}} commentaires">
+                                <a href="/post/{{.id}}" class="post-tag post-card-action-link" aria-label="Voir les commentaires, {{.comment_count}} commentaires">
                                     <i class="fa-solid fa-comment" aria-hidden="true"></i> {{.comment_count}}
                                 </a>
                             </div>

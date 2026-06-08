@@ -4,38 +4,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forum Plus - Accueil</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=1">
-    <link rel="stylesheet" href="/static/css/home.css?v=2">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+    <meta name="description" content="Partagez vos goûts musicaux, critiques d'albums ou actualités sur SoundPulse.">
+    <title>Créer un Post - SoundPulse</title>
+    <link class="styles" rel="stylesheet" href="/static/css/style.css?v=3">
+    <link class="styles" rel="stylesheet" href="/static/css/home.css?v=3">
+    <link class="styles" rel="stylesheet" href="/static/css/creator.css?v=3">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body>
-    <main>
-        <nav>
-            <a href="/"><i class="fa-solid fa-house text-lg"></i></a>
-            <a href="/createPost"><i class="fa-solid fa-circle-plus"></i></a>
-            <a href="/messages"><i class="fa-solid fa-comment-dots text-lg"></i></a>
-            <a href="/profile"><i class="fa-solid fa-user-gear text-lg"></i></a>
-            <a href="/logout"><i class="fa-solid fa-right-from-bracket text-lg"></i></a>
-        </nav>
-        <section>
-            <div class="input-row">
-                <form id="createPost" action="/createPost" method="post">
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <input class="inputText" required name="title" placeholder="Titre du poste" type="text" />
-                        <textarea name="description" class="textarea" placeholder="Description"></textarea>
-                        <input class="inputText" name="tags" placeholder="Tags (séparés par des virgules)"
-                            type="text" />
-                        <input class="inputText" name="media" placeholder="Image du poste" type="text" />
-                    </div>
-                    <button type="submit">Créer le poste</button>
-                </form>
+{{if .IsLogged}}<body class="theme-{{.UserData.ProfileTheme}}">{{else}}<body class="theme-default">{{end}}
+    <header class="header-navbar">
+        <div class="navbar-container">
+            <a href="/" class="nav-logo" aria-label="SoundPulse Accueil">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2a10 10 0 0 0-10 10v7a3 3 0 0 0 3 3h3v-8H5v-2a7 7 0 1 1 14 0v2h-3v8h3a3 3 0 0 0 3-3v-7A10 10 0 0 0 12 2zm-6 18H5a1 1 0 0 1-1-1v-5h2zm14-1a1 1 0 0 1-1 1h-1v-6h2z"/>
+                </svg>
+                <span>SoundPulse</span>
+            </a>
+            
+            <input type="checkbox" id="nav-toggle" class="nav-toggle-cb" style="display: none;">
+            <label for="nav-toggle" class="nav-toggle-label" aria-label="Menu de navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+            
+            <nav class="nav-links" aria-label="Navigation principale">
+                <a href="/"><i class="fa-solid fa-house" aria-hidden="true"></i> <span>Accueil</span></a>
+                {{if .IsLogged}}
+                <a href="/createPost"><i class="fa-solid fa-plus" aria-hidden="true"></i> <span>Créer</span></a>
+                <a href="/createTag"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> <span>Tag</span></a>
+                <a href="/settings" aria-label="Paramètres du compte"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> <span>Paramètres</span></a>
+                <a href="/user/@{{.UserData.Username}}"><i class="fa-solid fa-user" aria-hidden="true"></i> <span>Mon Profil</span></a>
+                <a href="/logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Déconnexion</span></a>
+                {{end}}
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-layout">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <a href="/" class="tag-item" style="width: 100%;">
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Accueil
+                </a>
             </div>
-        </section>
+        </aside>
+
+        <div class="content-area">
+            <section class="form-container">
+                <h1 class="form-title">Créer une nouvelle publication</h1>
+                <p class="form-subtitle">Partagez vos morceaux, albums et nouveautés musicales avec la communauté.</p>
+
+                {{if .Error}}
+                <div class="form-error" role="alert">
+                    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> {{.Error}}
+                </div>
+                {{end}}
+
+                <form id="createPostForm" action="/createPost" method="post">
+                    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                    
+                    <div class="form-group">
+                        <label for="title">Titre de la publication</label>
+                        <input class="inputText" id="title" required name="title" placeholder="Ex: Mon avis sur le dernier album de Daft Punk" type="text" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Contenu de la publication</label>
+                        <textarea name="description" id="description" class="textarea" required placeholder="Partagez votre avis, vos impressions..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Sélectionner des tags</label>
+                        <div id="tagsContainer" style="display: flex; flex-wrap: wrap; gap: 0.5rem; max-height: 150px; overflow-y: auto; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.01);">
+                            {{range .Tags}}
+                            <label class="checkbox-label tag-checkbox-item" style="width: fit-content; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.8rem; font-size: 0.85rem; border-radius: var(--radius-sm);">
+                                <input type="checkbox" name="tags" value="{{.}}"> {{.}}
+                            </label>
+                            {{else}}
+                            <p style="color: var(--text-muted); font-size: 0.95rem; width: 100%;">Aucun tag disponible. Veuillez d'abord en <a href="/createTag" style="color: var(--accent-color);">créer un</a>.</p>
+                            {{end}}
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="media">Lien d'image ou pochette d'album (optionnel)</label>
+                        <input class="inputText" id="media" name="media" placeholder="Ex: https://image.url/cover.jpg" type="text" />
+                    </div>
+
+                    <button type="submit" class="btn-submit-creator">
+                         <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Publier le post
+                    </button>
+                </form>
+            </section>
+        </div>
     </main>
 </body>
-
 </html>

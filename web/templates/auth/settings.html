@@ -1,41 +1,182 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Forum Plus</title>
-        <link rel="stylesheet" href="/static/css/style.css?v=2">
-        <link rel="stylesheet" href="/static/css/auth.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    </head>
 
-    <body>
-        <nav>
-            <a href="/"><i class="fa-solid fa-house-chimney"></i></a>
-        </nav>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Modifiez vos paramètres, photo de profil, genres musicaux favoris et mot de passe sur SoundPulse.">
+    <title>Paramètres - SoundPulse</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=3">
+    <link rel="stylesheet" href="/static/css/home.css?v=3">
+    <link rel="stylesheet" href="/static/css/creator.css?v=3">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
 
-        <div class="overlay"></div>
-
-        <div class="auth">
-            <div class="authForm">
-                <h2 class="login-title">Connexion</h2>
-                <hr/>
-                
-                <form action="/login" method="post" class="auth-form">
-                    <div class="input-group">
-                        <input required class="form-input" name="usernameOrMail" placeholder="Nom d'utilisateur / mail" type="text" maxlength="25" />
-                        <input required class="form-input input-password" name="password" placeholder="Mot de passe" type="password" maxlength="50" />
-                    </div>
-                    
-                    <button type="submit" class="btn-submit">Continuer</button>
-                    
-                    <div class="form-links">
-                        <a href="/passwordForgot" class="form-link">Mot de passe oublié ?</a>
-                        <p>|</p>
-                        <a href="/register" class="form-link">Inscription</a>
-                    </div>
-                </form>
-            </div>
+{{if .IsLogged}}<body class="theme-{{.UserData.ProfileTheme}}">{{else}}<body class="theme-default">{{end}}
+    <header class="header-navbar">
+        <div class="navbar-container">
+            <a href="/" class="nav-logo" aria-label="SoundPulse Accueil">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2a10 10 0 0 0-10 10v7a3 3 0 0 0 3 3h3v-8H5v-2a7 7 0 1 1 14 0v2h-3v8h3a3 3 0 0 0 3-3v-7A10 10 0 0 0 12 2zm-6 18H5a1 1 0 0 1-1-1v-5h2zm14-1a1 1 0 0 1-1 1h-1v-6h2z"/>
+                </svg>
+                <span>SoundPulse</span>
+            </a>
+            
+            <input type="checkbox" id="nav-toggle" class="nav-toggle-cb" style="display: none;">
+            <label for="nav-toggle" class="nav-toggle-label" aria-label="Menu de navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+            
+            <nav class="nav-links" aria-label="Navigation principale">
+                <a href="/"><i class="fa-solid fa-house" aria-hidden="true"></i> <span>Accueil</span></a>
+                {{if .IsLogged}}
+                <a href="/createPost"><i class="fa-solid fa-plus" aria-hidden="true"></i> <span>Créer</span></a>
+                <a href="/createTag"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> <span>Tag</span></a>
+                <a href="/settings" aria-label="Paramètres du compte"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> <span>Paramètres</span></a>
+                <a href="/user/@{{.UserData.Username}}"><i class="fa-solid fa-user" aria-hidden="true"></i> <span>Mon Profil</span></a>
+                <a href="/logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Déconnexion</span></a>
+                {{end}}
+            </nav>
         </div>
-    </body>
+    </header>
+
+    <main class="main-layout">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <a href="/user/@{{.UserData.Username}}" class="tag-item" style="width: 100%;">
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Retour au profil
+                </a>
+            </div>
+        </aside>
+
+        <div class="content-area">
+            <section class="form-container">
+                <h1 class="form-title">Paramètres du compte</h1>
+                <p class="form-subtitle">Personnalisez votre expérience et votre identité musicale.</p>
+
+                {{if .Error}}
+                <div class="form-error">
+                    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> {{.Error}}
+                </div>
+                {{end}}
+
+                <form id="settingsForm" action="/settings" method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                    <input type="hidden" name="action" value="update">
+                    
+                    <div class="form-group">
+                        <label for="username">Nom d'utilisateur</label>
+                        <input class="inputText" id="username" name="username" value="{{.UserData.Username}}" required type="text" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mail">Adresse email</label>
+                        <input class="inputText" id="mail" name="mail" value="{{.UserData.Mail}}" required type="email" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pp_url">Lien photo de profil (Avatar)</label>
+                        <input class="inputText" id="pp_url" name="pp_url" value="{{.UserData.PpURL}}" type="text" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="banner">Lien bannière de profil</label>
+                        <input class="inputText" id="banner" name="banner" value="{{.UserData.Banner}}" type="text" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="custom_status">Statut musical (ex: En écoute de Daft Punk)</label>
+                        <input class="inputText" id="custom_status" name="custom_status" value="{{.UserData.CustomStatus}}" placeholder="🎧 Votre statut du moment" type="text" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="favInstrumentSelect">Instrument favori</label>
+                        <select name="favorite_instrument" id="favInstrumentSelect" class="inputSelect">
+                            <option value="" {{if eq .UserData.FavoriteInstrument ""}}selected{{end}}>-- Aucun --</option>
+                            <option value="Guitare" {{if eq .UserData.FavoriteInstrument "Guitare"}}selected{{end}}>Guitare</option>
+                            <option value="Piano" {{if eq .UserData.FavoriteInstrument "Piano"}}selected{{end}}>Piano</option>
+                            <option value="Batterie" {{if eq .UserData.FavoriteInstrument "Batterie"}}selected{{end}}>Batterie</option>
+                            <option value="Synthétiseur" {{if eq .UserData.FavoriteInstrument "Synthétiseur"}}selected{{end}}>Synthétiseur</option>
+                            <option value="Chant" {{if eq .UserData.FavoriteInstrument "Chant"}}selected{{end}}>Chant</option>
+                            <option value="Basse" {{if eq .UserData.FavoriteInstrument "Basse"}}selected{{end}}>Basse</option>
+                            <option value="Violon" {{if eq .UserData.FavoriteInstrument "Violon"}}selected{{end}}>Violon</option>
+                            <option value="Saxophone" {{if eq .UserData.FavoriteInstrument "Saxophone"}}selected{{end}}>Saxophone</option>
+                            <option value="Flûte" {{if eq .UserData.FavoriteInstrument "Flûte"}}selected{{end}}>Flûte</option>
+                            <option value="Autre" {{if eq .UserData.FavoriteInstrument "Autre"}}selected{{end}}>Autre</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profileThemeSelect">Thème visuel de profil</label>
+                        <select name="profile_theme" id="profileThemeSelect" class="inputSelect">
+                            <option value="default" {{if eq .UserData.ProfileTheme "default"}}selected{{end}}>Violet Néon (Défaut)</option>
+                            <option value="sunset" {{if eq .UserData.ProfileTheme "sunset"}}selected{{end}}>Sunset Orange</option>
+                            <option value="electro" {{if eq .UserData.ProfileTheme "electro"}}selected{{end}}>Electro Lime</option>
+                            <option value="cyberpunk" {{if eq .UserData.ProfileTheme "cyberpunk"}}selected{{end}}>Cyberpunk Yellow</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Genres musicaux préférés</label>
+                        <div id="genresCheckboxGroup" class="checkbox-grid">
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Rock" {{if contains .UserData.PreferredGenres "Rock"}}checked{{end}}> Rock</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Pop" {{if contains .UserData.PreferredGenres "Pop"}}checked{{end}}> Pop</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Metal" {{if contains .UserData.PreferredGenres "Metal"}}checked{{end}}> Metal</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Electro" {{if contains .UserData.PreferredGenres "Electro"}}checked{{end}}> Electro</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Hip-Hop" {{if contains .UserData.PreferredGenres "Hip-Hop"}}checked{{end}}> Hip-Hop</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Jazz" {{if contains .UserData.PreferredGenres "Jazz"}}checked{{end}}> Jazz</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Classique" {{if contains .UserData.PreferredGenres "Classique"}}checked{{end}}> Classique</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Blues" {{if contains .UserData.PreferredGenres "Blues"}}checked{{end}}> Blues</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Reggae" {{if contains .UserData.PreferredGenres "Reggae"}}checked{{end}}> Reggae</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Funk" {{if contains .UserData.PreferredGenres "Funk"}}checked{{end}}> Funk</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Rap" {{if contains .UserData.PreferredGenres "Rap"}}checked{{end}}> Rap</label>
+                            <label class="checkbox-label"><input type="checkbox" name="preferred_genres" value="Acoustique" {{if contains .UserData.PreferredGenres "Acoustique"}}checked{{end}}> Acoustique</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bio">Biographie / Description</label>
+                        <textarea name="bio" id="bio" class="textarea" placeholder="Partagez vos artistes ou projets musicaux du moment...">{{.UserData.Bio}}</textarea>
+                    </div>
+
+                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+
+                    <h2 class="form-title" style="font-size: 1.25rem;">Changer le mot de passe</h2>
+                    <p class="form-subtitle" style="font-size: 0.85rem; margin-bottom: 1rem;">Laissez vide si vous ne souhaitez pas modifier le mot de passe.</p>
+
+                    <div class="form-group">
+                        <label for="current_password">Mot de passe actuel</label>
+                        <input class="inputText" id="current_password" name="current_password" type="password" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new_password">Nouveau mot de passe</label>
+                        <input class="inputText" id="new_password" name="new_password" type="password" />
+                    </div>
+
+                    <button type="submit" class="btn-submit-creator">
+                        <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Enregistrer les paramètres
+                    </button>
+                </form>
+
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 2rem 0;">
+
+                <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: var(--radius-md); padding: 1.5rem;">
+                    <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ef4444; margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> Zone de danger</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">La suppression de votre compte effacera l'intégralité de vos données de manière définitive. Cette action ne peut pas être annulée.</p>
+                    <form action="/settings" method="post">
+                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                        <input type="hidden" name="action" value="delete">
+                        <button type="submit" class="btn-submit-creator btn-danger" style="width: auto;">
+                            <i class="fa-solid fa-trash" aria-hidden="true"></i> Supprimer définitivement mon compte
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
+</body>
 </html>

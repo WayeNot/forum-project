@@ -1,153 +1,103 @@
-:root {
-
-    --main-bg: #121212;
-    --main-color: rgba(255, 255, 255, 0.8);
-    --main-color2: rgba(255, 255, 255, 0.6);
-    --accent-blue: #00B4D8;
-    --accent-red: #FF4040;
-    --accent-gold: #FFD700;
-    --accent-purple: #9D00FF;
-    --white-5: rgba(255, 255, 255, 0.05);
-    --white-20: rgba(255, 255, 255, 0.2);  
-    --white-80: rgba(255, 255, 255, 0.8);  
-}
-
-
-.overlay {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 30;
-    backdrop-filter: blur(5px);
-}
-
-.auth {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 40;
+.auth-wrapper {
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 1.5rem;
+    position: relative;
+    z-index: 10;
 }
 
 .authForm {
     width: 100%;
-    max-width: 28rem;
-    background-image:
-        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-        url("../../../img/home-background.jpg");             
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-
-    border: 1px solid var(--accent-blue);
-    border-radius: 8px;
-    padding: 2rem;
-    animation: fadeIn 0.5s ease-out;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
+    max-width: 26rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(12px);
+    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-
-.authForm h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--accent-blue);
+.login-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
     text-align: center;
-    font-family: 'Bebas Neue', sans-serif;
-    width: 100%;
-    margin: 0 0 1.5rem;
-    text-shadow: 0 0 10px rgba(0, 180, 216, 0.3);
-    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
 }
 
-.authForm hr {
-    border: 0;
-    border-top: 1px solid var(--white-20);
-    width: 80%;
-    margin: 1.5rem auto;
+.auth-subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
 }
 
 .auth-form {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 80%;
-    margin: 0 auto;
-    gap: 1.5rem;
+    gap: 1.25rem;
+    width: 100%;
 }
 
 .input-group {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    gap: 1rem;
     width: 100%;
     gap: 0.5rem;
 }
 
 .form-input {
     width: 100%;
-    box-sizing: border-box;
-    border: 2px solid var(--white-20);
-    background: transparent;
-    font-family: 'Poppins', sans-serif;
-    font-size: 1rem;
-    color: var(--main-color);
     padding: 0.75rem 1rem;
-    border-radius: 4px;
-    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-primary);
+    border-radius: var(--radius-md);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.form-input::placeholder {
+    color: var(--text-muted);
 }
 
 .form-input:focus {
-    outline: none;
-    border-color: var(--accent-blue);
-    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.2);
-}
-
-.input-password {
-    position: relative;
-}
-
-.input-password svg {
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--white-20);
-    cursor: pointer;
+    border-color: var(--accent-color);
+    background: rgba(6, 182, 212, 0.05);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
 }
 
 .btn-submit {
     width: 100%;
-    background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+    background: var(--accent-gradient);
+    color: #ffffff;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     border: none;
-    color: white;
-    padding: 0.75rem;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.25rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 180, 216, 0.3);
+    padding: 0.75rem 1.5rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-md);
+    margin-top: 0.5rem;
 }
 
 .btn-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 180, 216, 0.5);
-    background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
+    opacity: 0.95;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(6, 182, 212, 0.35);
 }
 
 .form-links {
@@ -156,59 +106,41 @@
     align-items: center;
     gap: 0.75rem;
     width: 100%;
-    color: var(--white-20);
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.25rem;
 }
 
 .form-link {
-    color: var(--white-20);
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    color: var(--accent-color);
+    font-weight: 500;
+    transition: color 0.2s ease;
 }
 
 .form-link:hover {
-    color: var(--accent-blue);
-    text-decoration: none;
+    color: var(--text-primary);
+    text-decoration: underline;
 }
 
-
-.form-link::before {
-    content: "🎵";
-    font-size: 1.2rem;
+.divider {
+    color: var(--border-color);
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-@keyframes noteBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
+@media (max-width: 480px) {
+    .authForm {
+        padding: 1.5rem 1.25rem;
+    }
 }
-
-
-.music-element {
-    animation: noteBounce 2s infinite;
-}
-
-.flair {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.flair-rock { background: #FF4040; color: white; }
-.flair-electro { background: #00B4D8; color: white; }
-.flair-classical { background: #FFD700; color: #121212; }
-.flair-hiphop { background: #9D00FF; color: white; }
-.flair-jazz { background: #8A2BE2; color: white; }

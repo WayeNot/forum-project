@@ -1,4 +1,4 @@
-# Base de données locale
+# Base de donnees locale
 *.db
 *.db-*
 
@@ -6,6 +6,6 @@
 *.tmp
 *.log
 
-# Système
+# Systeme
 .DS_Store
 Thumbs.db

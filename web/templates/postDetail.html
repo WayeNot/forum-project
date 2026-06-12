@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Découvrez la publication '{{.Title}}' et participez aux commentaires sur SoundPulse.">
+    <title>{{.Title}} - SoundPulse</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=3">
+    <link rel="stylesheet" href="/static/css/home.css?v=3">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+{{if .IsLogged}}<body class="theme-{{.UserData.ProfileTheme}}">{{else}}<body class="theme-default">{{end}}
+    <header class="header-navbar">
+        <div class="navbar-container">
+            <a href="/" class="nav-logo" aria-label="SoundPulse Accueil">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2a10 10 0 0 0-10 10v7a3 3 0 0 0 3 3h3v-8H5v-2a7 7 0 1 1 14 0v2h-3v8h3a3 3 0 0 0 3-3v-7A10 10 0 0 0 12 2zm-6 18H5a1 1 0 0 1-1-1v-5h2zm14-1a1 1 0 0 1-1 1h-1v-6h2z"/>
+                </svg>
+                <span>SoundPulse</span>
+            </a>
+            
+            <input type="checkbox" id="nav-toggle" class="nav-toggle-cb">
+            <label for="nav-toggle" class="nav-toggle-label" aria-label="Menu de navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+            
+            <nav class="nav-links" aria-label="Navigation principale">
+                <a href="/"><i class="fa-solid fa-house" aria-hidden="true"></i> <span>Accueil</span></a>
+                {{if .IsLogged}}
+                <a href="/createPost"><i class="fa-solid fa-plus" aria-hidden="true"></i> <span>Créer</span></a>
+                <a href="/createTag"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> <span>Tag</span></a>
+                <a href="/settings" aria-label="Paramètres du compte"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> <span>Paramètres</span></a>
+                <a href="/user/@{{.UserData.Username}}"><i class="fa-solid fa-user" aria-hidden="true"></i> <span>Mon Profil</span></a>
+                <a href="/logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Déconnexion</span></a>
+                {{else}}
+                <a href="/login" class="login-btn"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Connexion</span></a>
+                {{end}}
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-layout">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <a href="/" class="tag-item full-width">
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Accueil
+                </a>
+            </div>
+            
+            {{if .IsLogged}}
+            <a href="/user/@{{.UserData.Username}}" class="full-width-link">
+                <div class="sidebar-user-card">
+                    <img src="{{.UserData.PpURL}}" alt="Photo de profil de {{.UserData.Username}}" class="user-card-avatar" width="42" height="42">
+                    <div class="user-card-info">
+                        <span class="user-card-name">{{.UserData.Username}}</span>
+                        <span class="user-card-email">{{.UserData.Mail}}</span>
+                    </div>
+                </div>
+            </a>
+            {{end}}
+        </aside>
+
+        <div class="content-area">
+            <article class="post-card">
+                <header class="post-card-header">
+                    <a href="/user/@{{.AuthorName}}" aria-label="Profil de {{.AuthorName}}">
+                        <div class="author-info">
+                             <img src="{{.AuthorPp}}" alt="Photo de profil de {{.AuthorName}}" class="auth-pp" width="40" height="40" loading="lazy">
+                            <div class="author-meta">
+                                <span class="author-name">{{.AuthorName}}</span>
+                                <span class="post-card-ago"><i class="fa-regular fa-clock" aria-hidden="true"></i> Publié le {{.CreatedAt}}</span>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    {{if .IsAuthor}}
+                    <div class="post-card-actions-group">
+                        <a href="/post/edit?id={{.PostID}}" class="post-tag post-card-action-button edit"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Modifier</a>
+                        <a href="/post/delete?id={{.PostID}}" class="post-tag post-card-action-button delete"><i class="fa-solid fa-trash" aria-hidden="true"></i> Supprimer</a>
+                    </div>
+                    {{end}}
+                </header>
+
+                <div class="post-card-content">
+                    <h1 class="post-card-title">{{.Title}}</h1>
+                    <p class="post-card-description">{{.Description}}</p>
+
+                    {{if .ImageURL}}
+                    <div class="post-card-image-wrapper">
+                        <img src="{{.ImageURL}}" alt="Illustration pour {{.Title}}" class="post-card-image" width="600" height="300">
+                    </div>
+                    {{end}}
+
+                    {{if .Tags}}
+                    <div class="post-card-tags">
+                        {{range .Tags}}
+                        <span class="post-tag">#{{.}}</span>
+                        {{end}}
+                    </div>
+                    {{end}}
+                </div>
+
+                <div class="post-card-actions">
+                    <div class="post-card-actions-group">
+                        <a href="/post/like?id={{.PostID}}" class="post-tag post-card-action-link {{if eq .UserVote 1}}active{{end}}" aria-label="Aimer ce post, {{.LikesCount}} j'aime">
+                            <i class="fa-solid fa-thumbs-up" aria-hidden="true"></i> {{.LikesCount}}
+                        </a>
+                        <a href="/post/dislike?id={{.PostID}}" class="post-tag post-card-action-link dislike {{if eq .UserVote -1}}active{{end}}" aria-label="Ne pas aimer ce post, {{.DislikesCount}} j'aime pas">
+                            <i class="fa-solid fa-thumbs-down" aria-hidden="true"></i> {{.DislikesCount}}
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <section class="comment-section">
+                <h2 class="comment-section-title"><i class="fa-solid fa-comments" aria-hidden="true"></i> Commentaires ({{.CommentsCount}})</h2>
+
+                {{if .IsLogged}}
+                <form action="/post/comment" method="post" class="comment-form">
+                    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                    <input type="hidden" name="post_id" value="{{.PostID}}">
+                    <label for="main-comment-content" class="sr-only">Votre commentaire</label>
+                    <textarea name="content" id="main-comment-content" required placeholder="Ajouter un commentaire..." aria-label="Contenu du commentaire" class="comment-textarea"></textarea>
+                    <button type="submit" class="login-btn comment-submit">Commenter</button>
+                </form>
+                {{else}}
+                <div class="comment-empty-note">
+                    <p>Vous devez être <a href="/login">connecté</a> pour ajouter un commentaire.</p>
+                </div>
+                {{end}}
+                <div id="commentsContainer" class="comments-list">
+                    {{range .Comments}}
+                        {{template "renderComment" .}}
+                    {{else}}
+                    <p class="comment-empty">Aucun commentaire pour le moment.</p>
+                    {{end}}
+                </div>
+            </section>
+        </div>
+    </main>
+
+{{define "renderComment"}}
+<div class="comment-node {{if ne .parent_id 0}}reply-comment-node{{end}}">
+    <div class="comment-meta-row">
+        <a href="/user/@{{.author_name}}" aria-label="Profil de {{.author_name}}">
+            <div class="comment-author-row">
+                <img src="{{.author_pp}}" alt="Photo de profil de {{.author_name}}" width="28" height="28" loading="lazy" class="comment-author-avatar">
+                <span class="comment-author-name">{{.author_name}}</span>
+                <span class="comment-timestamp"><i class="fa-regular fa-clock" aria-hidden="true"></i> {{.created_at}}</span>
+            </div>
+        </a>
+    </div>
+    
+    <p class="comment-content">{{.content}}</p>
+    
+    <div class="comment-action-list">
+        <a href="/comment/like?id={{.id}}" class="post-tag comment-action-link {{if eq .user_vote 1}}active{{end}}" aria-label="Aimer ce commentaire, {{.likes_count}} j'aime">
+            <i class="fa-solid fa-thumbs-up" aria-hidden="true"></i> {{.likes_count}}
+        </a>
+        <a href="/comment/dislike?id={{.id}}" class="post-tag comment-action-link dislike {{if eq .user_vote -1}}active{{end}}" aria-label="Ne pas aimer ce commentaire, {{.dislikes_count}} j'aime pas">
+            <i class="fa-solid fa-thumbs-down" aria-hidden="true"></i> {{.dislikes_count}}
+        </a>
+        {{if .IsLogged}}
+        <label for="reply-toggle-{{.id}}" class="post-tag comment-action-link toggle-reply">
+            <i class="fa-solid fa-reply" aria-hidden="true"></i> Répondre
+        </label>
+        {{end}}
+    </div>
+    
+    {{if .IsLogged}}
+    <input type="checkbox" id="reply-toggle-{{.id}}" class="reply-toggle-cb">
+    <div class="reply-form-wrapper">
+        <form action="/post/comment" method="post" class="reply-form">
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+            <input type="hidden" name="post_id" value="{{.PostID}}">
+            <input type="hidden" name="parent_id" value="{{.id}}">
+            <label for="reply-content-{{.id}}" class="sr-only">Votre réponse</label>
+            <textarea name="content" id="reply-content-{{.id}}" required placeholder="Votre réponse..." class="reply-textarea"></textarea>
+            <div class="reply-actions">
+                <label for="reply-toggle-{{.id}}" class="post-tag reply-cancel">Annuler</label>
+                <button type="submit" class="login-btn reply-submit">Répondre</button>
+            </div>
+        </form>
+    </div>
+    {{end}}
+    
+    <div class="replies-list">
+        {{range .replies}}
+            {{template "renderComment" .}}
+        {{end}}
+    </div>
+</div>
+{{end}}
+</body>
+</html>

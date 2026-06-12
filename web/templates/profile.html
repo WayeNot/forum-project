@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="SoundPulse - Le forum musical pour échanger sur vos chansons, albums et artistes préférés. Partagez vos playlists et instruments.">
-    <title>SoundPulse - Le Forum Musical</title>
+    <meta name="description" content="Profil de @{{.TargetUser.Username}} sur SoundPulse, le forum de discussion musicale. Découvrez ses goûts et publications.">
+    <title>Profil de @{{.TargetUser.Username}} - SoundPulse</title>
     <link rel="stylesheet" href="/static/css/style.css?v=3">
     <link rel="stylesheet" href="/static/css/home.css?v=3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-{{if .IsLogged}}<body class="theme-{{.UserData.ProfileTheme}}">{{else}}<body class="theme-default">{{end}}
+{{if .TargetUser}}<body class="theme-{{.TargetUser.ProfileTheme}}">{{else if .IsLogged}}<body class="theme-{{.UserData.ProfileTheme}}">{{else}}<body class="theme-default">{{end}}
     <header class="header-navbar">
         <div class="navbar-container">
             <a href="/" class="nav-logo" aria-label="SoundPulse Accueil">
@@ -46,91 +46,100 @@
 
     <main class="main-layout">
         <aside class="sidebar">
-            <details class="sidebar-section" open>
-                <summary><h2><i class="fa-solid fa-compass" aria-hidden="true"></i> Navigation</h2></summary>
-                <div class="tag-list vertical">
-                    <a href="/" class="tag-item full-width {{if and (eq .Filter "") (eq .CurrentTag "")}}active{{end}}">
-                        <i class="fa-solid fa-fire" aria-hidden="true"></i> Récents
-                    </a>
-                    <a href="/?filter=popular" class="tag-item full-width {{if eq .Filter "popular"}}active{{end}}">
-                        <i class="fa-solid fa-chart-line" aria-hidden="true"></i> Populaires
-                    </a>
-                    {{if .IsLogged}}
-                    <a href="/?filter=created" class="tag-item full-width {{if eq .Filter "created"}}active{{end}}">
-                        <i class="fa-solid fa-user-pen" aria-hidden="true"></i> Créations
-                    </a>
-                    <a href="/?filter=liked" class="tag-item full-width {{if eq .Filter "liked"}}active{{end}}">
-                        <i class="fa-solid fa-heart" aria-hidden="true"></i> Likés
-                    </a>
-                    {{end}}
-                </div>
-            </details>
-            <details class="sidebar-section" open>
-                <summary><h2><i class="fa-solid fa-hashtag" aria-hidden="true"></i> Catégories</h2></summary>
-                <div class="tag-list" id="tagListContainer">
-                    <a href="/" class="tag-item {{if eq .CurrentTag ""}}active{{end}} tag-item-selectable">
-                        <span class="tag-hash">#</span> tous
-                    </a>
-                    {{range .Tags}}
-                    <a href="/?tag={{.}}" class="tag-item {{if eq $.CurrentTag .}}active{{end}} tag-item-selectable">
-                        <span class="tag-hash">#</span> {{.}}
-                    </a>
-                    {{end}}
-                </div>
-            </details>
+            <div class="sidebar-section">
+                <a href="/" class="tag-item full-width">
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Accueil
+                </a>
+            </div>
 
             {{if .IsLogged}}
-            <a href="/user/@{{.UserData.Username}}" class="full-width-link" aria-label="Voir mon profil">
-                <div class="sidebar-user-card">
-                    <img src="{{.UserData.PpURL}}" alt="Photo de profil de {{.UserData.Username}}" class="user-card-avatar" width="42" height="42">
-                    <div class="user-card-info">
-                        <span class="user-card-name">{{.UserData.Username}}</span>
-                        <span class="user-card-email">{{.UserData.Mail}}</span>
-                    </div>
+            <div class="sidebar-user-card">
+                <img src="{{.UserData.PpURL}}" alt="Photo de profil de {{.UserData.Username}}" class="user-card-avatar" width="42" height="42">
+                <div class="user-card-info">
+                    <span class="user-card-name">{{.UserData.Username}}</span>
+                    <span class="user-card-email">{{.UserData.Mail}}</span>
                 </div>
-            </a>
+            </div>
             {{end}}
         </aside>
 
         <div class="content-area">
-            <section class="post-container">
-                <div class="feed-header">
-                    {{if .CurrentTag}}
-                    <div class="filter-badge">
-                        Catégorie : <span>#{{.CurrentTag}}</span>
-                        <a href="/" class="clear-filter" title="Enlever le filtre" aria-label="Enlever le filtre"><i class="fa-solid fa-xmark" aria-hidden="true"></i></a>
+            <section class="profile-card">
+                {{if .TargetUser.Banner}}
+                <div class="profile-banner" style="background-image: url('{{.TargetUser.Banner}}');"></div>
+                {{else}}
+                <div class="profile-banner-empty"></div>
+                {{end}}
+
+                <div class="profile-card-inner">
+                    <div class="profile-top-row">
+                        <img src="{{.TargetUser.PpURL}}" alt="Avatar de {{.TargetUser.Username}}" width="110" height="110" class="profile-avatar-big">
+                        
+                        {{if .IsSelf}}
+                        <a href="/settings" class="profile-action"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> Éditer le profil</a>
+                        {{end}}
                     </div>
-                    {{end}}
+
+                    <div class="profile-summary">
+                        <h1 class="profile-name">@{{.TargetUser.Username}}</h1>
+                        {{if .TargetUser.CustomStatus}}
+                        <span class="profile-status-pill">
+                            <i class="fa-solid fa-headphones" aria-hidden="true"></i> {{.TargetUser.CustomStatus}}
+                        </span>
+                        {{end}}
+                    </div>
+
+                    <p class="profile-meta-text"><i class="fa-solid fa-envelope" aria-hidden="true"></i> {{.TargetUser.Mail}}</p>
                     
-                    {{if .Posts}}
-                    <h1 class="post-count">
-                        <i class="fa-solid fa-music" aria-hidden="true"></i> 
-                        {{len .Posts}} {{if eq (len .Posts) 1}}publication trouvée{{else}}publications trouvées{{end}}
-                    </h1>
-                    {{else}}
-                    <h1 class="post-count"><i class="fa-solid fa-folder-open" aria-hidden="true"></i> Aucun post trouvé</h1>
-                    {{end}}
+                    <div class="profile-info-grid">
+                        <div class="profile-stat-card">
+                            <h2 class="profile-stat-title"><i class="fa-solid fa-address-card" aria-hidden="true"></i> Biographie</h2>
+                            <p class="profile-stat-value">{{if .TargetUser.Bio}}{{.TargetUser.Bio}}{{else}}Cet utilisateur n'a pas encore rédigé de biographie.{{end}}</p>
+                        </div>
+                        
+                        <div class="profile-stat-card">
+                            <div>
+                                <h2 class="profile-stat-title"><i class="fa-solid fa-guitar" aria-hidden="true"></i> Instrument favori</h2>
+                                <p class="profile-stat-value">
+                                    {{if .TargetUser.FavoriteInstrument}}{{.TargetUser.FavoriteInstrument}}{{else}}Aucun spécifié{{end}}
+                                </p>
+                            </div>
+                            <div class="genre-tags">
+                                {{if .TargetUser.PreferredGenres}}
+                                    {{range (split .TargetUser.PreferredGenres ",")}}
+                                        {{if .}}
+                                        <span class="post-tag genre-tag">{{.}}</span>
+                                        {{end}}
+                                    {{end}}
+                                {{else}}
+                                    <span class="empty-state-text">Aucun spécifié</span>
+                                {{end}}
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </section>
+
+            <section class="post-container">
+                <h2 class="profile-posts-title"><i class="fa-solid fa-music" aria-hidden="true"></i> Publications de @{{.TargetUser.Username}} ({{len .Posts}})</h2>
 
                 {{if .Posts}}
                 <div class="post-grid">
                     {{range .Posts}}
                     <article class="post-card">
                         <header class="post-card-header">
-                            <a href="/user/@{{.author_name}}" aria-label="Profil de {{.author_name}}">
-                                <div class="author-info">
-                                    <img src="{{.author_pp}}" alt="Avatar de {{.author_name}}" class="auth-pp" width="40" height="40" loading="lazy">
-                                    <div class="author-meta">
-                                        <span class="author-name">{{.author_name}}</span>
-                                        <span class="post-card-ago"><i class="fa-regular fa-clock" aria-hidden="true"></i> Il y a {{.time_ago}}</span>
-                                    </div>
+                            <div class="author-info">
+                                <img src="{{.author_pp}}" alt="Avatar de {{.author_name}}" class="auth-pp" width="40" height="40" loading="lazy">
+                                <div class="author-meta">
+                                    <span class="author-name">{{.author_name}}</span>
+                                    <span class="post-card-ago"><i class="fa-regular fa-clock" aria-hidden="true"></i> Publié le {{.created_at}}</span>
                                 </div>
-                            </a>
+                            </div>
                         </header>
                         
                         <div class="post-card-content">
                             <a href="/post/{{.id}}" aria-label="Lire la publication {{.title}}">
-                                <h2 class="post-card-title">{{.title}}</h2>
+                                <h3 class="post-card-title">{{.title}}</h3>
                             </a>
                             <p class="post-card-description">{{.description}}</p>
                             
@@ -168,10 +177,11 @@
                     </article>
                     {{end}}
                 </div>
+                {{else}}
+                <p class="empty-state-text">Aucune publication pour le moment.</p>
                 {{end}}
             </section>
         </div>
     </main>
 </body>
-
 </html>

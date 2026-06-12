@@ -15,42 +15,33 @@ type TagData struct {
 func CreateTag(w http.ResponseWriter, r *http.Request) {
 	var postData TagData
 
-	session, err := r.Cookie("session_id")
-	if err != nil || session.Value == "" {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-
-	var userID int
-	const requestUserID = `SELECT user_id FROM sessions WHERE session_id = ? AND is_active = TRUE LIMIT 1`
-	err = db.DB.QueryRow(requestUserID, session.Value).Scan(&userID)
-	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
+	userData, _ := getLoggedUser(r)
+	csrfToken := GetOrCreateCSRFToken(w, r)
 
 	if r.Method == "POST" {
+		if !VerifyCSRFToken(r) {
+			http.Error(w, "Invalid CSRF Token", http.StatusForbidden)
+			return
+		}
+
 		postData.Name = r.FormValue("name")
 		postData.Description = r.FormValue("description")
 
 		if postData.Name == "" || postData.Description == "" {
-			println("Le nom et la description sont requis")
-			templates.Render("creator/createTag", w, r)
+			templates.Render("creator/createTag", w, map[string]any{"Error": "Le nom et la description sont requis", "CSRFToken": csrfToken, "IsLogged": true, "UserData": userData})
 			return
 		}
 
 		const insertTag = `INSERT INTO tags (name, description) VALUES (?, ?)`
 		_, err := db.DB.Exec(insertTag, postData.Name, postData.Description)
-
 		if err != nil {
-			println(err.Error())
-			println("Erreur lors de la création du tag")
-			templates.Render("creator/createTag", w, r)
+			templates.Render("creator/createTag", w, map[string]any{"Error": "Erreur lors de la création du tag", "CSRFToken": csrfToken, "IsLogged": true, "UserData": userData})
 			return
 		}
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	templates.Render("creator/createTag", w, r)
+
+	templates.Render("creator/createTag", w, map[string]any{"CSRFToken": csrfToken, "IsLogged": true, "UserData": userData})
 }

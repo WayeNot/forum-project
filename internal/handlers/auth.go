@@ -8,18 +8,20 @@ import (
 	"net/http"
 )
 
-func SetCookie(userID int) *http.Cookie {
+func SetCookie(userID int) (*http.Cookie, error) {
 	idSessionId := uuid.New().String()
 
 	request := `UPDATE sessions SET is_active = FALSE WHERE user_id = ?`
 	_, err := db.DB.Exec(request, userID)
 	if err != nil {
-		println(err.Error())
-		return nil
+		return nil, err
 	}
 
 	request = `INSERT INTO sessions (user_id, session_id, is_active) VALUES (?, ?, TRUE)`
 	_, err = db.DB.Exec(request, userID, idSessionId)
+	if err != nil {
+		return nil, err
+	}
 
 	cookie := &http.Cookie{
 		Name:     "session_id",
@@ -27,11 +29,11 @@ func SetCookie(userID int) *http.Cookie {
 		MaxAge:   86400,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   secureCookie(),
 		SameSite: http.SameSiteLaxMode,
 	}
 
-	return cookie
+	return cookie, nil
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +66,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie := SetCookie(userID)
+	cookie, err := SetCookie(userID)
+	if err != nil {
+		templates.Render("auth/login", w, map[string]any{"Error": "Impossible de creer la session."})
+		return
+	}
 	http.SetCookie(w, cookie)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -115,13 +121,18 @@ func Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
+	session, err := r.Cookie("session_id")
+	if err == nil && session.Value != "" {
+		_, _ = db.DB.Exec(`UPDATE sessions SET is_active = FALSE WHERE session_id = ?`, session.Value)
+	}
+
 	cookie := &http.Cookie{
 		Name:     "session_id",
 		Value:    "",
-		MaxAge:   0,
+		MaxAge:   -1,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   secureCookie(),
 		SameSite: http.SameSiteLaxMode,
 	}
 

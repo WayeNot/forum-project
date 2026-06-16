@@ -142,7 +142,7 @@ func UserSettings(w http.ResponseWriter, r *http.Request) {
 				MaxAge:   -1,
 				Path:     "/",
 				HttpOnly: true,
-				Secure:   true,
+				Secure:   secureCookie(),
 				SameSite: http.SameSiteLaxMode,
 			}
 			http.SetCookie(w, cookie)

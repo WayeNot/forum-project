@@ -17,7 +17,7 @@ func GetOrCreateCSRFToken(w http.ResponseWriter, r *http.Request) string {
 		Value:    token,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   secureCookie(),
 		SameSite: http.SameSiteLaxMode,
 	})
 	return token

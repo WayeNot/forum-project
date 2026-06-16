@@ -28,3 +28,21 @@ func TestPasswordHashing(t *testing.T) {
 		t.Fatal("Expected error with incorrect password but got nil")
 	}
 }
+
+func TestSecureCookieDefaultIsLocalFriendly(t *testing.T) {
+	t.Setenv("COOKIE_SECURE", "")
+	t.Setenv("APP_ENV", "")
+
+	if secureCookie() {
+		t.Fatal("expected secure cookie to be disabled by default for local HTTP")
+	}
+}
+
+func TestSecureCookieCanBeEnabled(t *testing.T) {
+	t.Setenv("COOKIE_SECURE", "true")
+	t.Setenv("APP_ENV", "")
+
+	if !secureCookie() {
+		t.Fatal("expected secure cookie to be enabled with COOKIE_SECURE=true")
+	}
+}

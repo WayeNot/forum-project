@@ -5,6 +5,7 @@ services:
       - "5500:5500"
     environment:
       DB_PATH: /app/data/forum.db
+      COOKIE_SECURE: "false"
     volumes:
       - forum-data:/app/data
     restart: unless-stopped

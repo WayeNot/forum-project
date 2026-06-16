@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/WayeNot/forum-project/internal/db"
 	"github.com/WayeNot/forum-project/internal/handlers"
@@ -11,7 +12,12 @@ import (
 const port = ":5500"
 
 func main() {
-	db.Init("forum.db")
+	dbPath := os.Getenv("DB_PATH")
+	if dbPath == "" {
+		dbPath = "forum.db"
+	}
+
+	db.Init(dbPath)
 
 	fs := http.FileServer(http.Dir("web/static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
@@ -35,6 +41,6 @@ func main() {
 	http.HandleFunc("/user/", handlers.Chain(handlers.UserProfile, handlers.SecurityHeaders))
 	http.HandleFunc("/settings", handlers.Chain(handlers.UserSettings, handlers.SecurityHeaders, handlers.RequireAuth))
 
-	fmt.Printf("✅ Serveur lancé sur http://localhost%s\n", port)
+	fmt.Printf("Serveur lance sur http://localhost%s\n", port)
 	http.ListenAndServe(port, nil)
 }

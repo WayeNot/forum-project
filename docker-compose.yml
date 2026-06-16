@@ -1,0 +1,13 @@
+services:
+  forum:
+    build: .
+    ports:
+      - "5500:5500"
+    environment:
+      DB_PATH: /app/data/forum.db
+    volumes:
+      - forum-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  forum-data:

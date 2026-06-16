@@ -171,3 +171,39 @@ Tags utilisés :
 - Choisir la méthode officielle pour les migrations
 - Adapter le cookie `Secure` entre local et production
 - Définir les catégories initiales du forum
+
+## Docker
+
+Le projet peut aussi etre lance avec Docker.
+
+Construire l'image :
+
+```powershell
+docker compose build
+```
+
+Lancer le conteneur :
+
+```powershell
+docker compose up
+```
+
+Le site est disponible ici :
+
+```text
+http://localhost:5500
+```
+
+La base SQLite du conteneur est stockee dans un volume Docker nomme `forum-data`.
+
+Arreter le conteneur :
+
+```powershell
+docker compose down
+```
+
+Repartir avec une base Docker vide :
+
+```powershell
+docker compose down -v
+```

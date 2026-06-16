@@ -67,6 +67,16 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	rows, err := db.DB.Query(postsQuery)
 	if err != nil {
 		println(err.Error())
+
+		data := map[string]any{
+			"IsLogged": isLogged,
+			"UserData": userData,
+			"Posts":    []map[string]any{},
+			"Tags":     getAllTags(),
+		}
+
+		templates.Render("home", w, data)
+		return
 	}
 	defer func() {
 		if rows != nil {

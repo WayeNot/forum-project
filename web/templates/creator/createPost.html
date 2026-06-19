@@ -34,7 +34,6 @@
                 <a href="/"><i class="fa-solid fa-house" aria-hidden="true"></i> <span>Accueil</span></a>
                 {{if .IsLogged}}
                 <a href="/createPost"><i class="fa-solid fa-plus" aria-hidden="true"></i> <span>Créer</span></a>
-                <a href="/createTag"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> <span>Tag</span></a>
                 <a href="/settings" aria-label="Paramètres du compte"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> <span>Paramètres</span></a>
                 <a href="/user/@{{.UserData.Username}}"><i class="fa-solid fa-user" aria-hidden="true"></i> <span>Mon Profil</span></a>
                 <a href="/logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Déconnexion</span></a>
@@ -70,17 +69,33 @@
                     
                     <div class="form-group">
                         <label>Sélectionner des tags</label>
-                        <div id="tagsContainer" class="tag-checkbox-container">
-                            {{range .Tags}}
-                            <label class="checkbox-label tag-checkbox-item">
-                                <input type="checkbox" name="tags" value="{{.}}"> {{.}}
-                            </label>
-                            {{else}}
-                            <p class="empty-tag-note">Aucun tag disponible. Veuillez d'abord en <a href="/createTag">créer un</a>.</p>
-                            {{end}}
+                        <div class="tag-selection-panel">
+                            <p id="newTagError" class="form-error hidden" style="margin:0.75rem 0 0 0;"></p>
+                            
+                            <input id="tagSearch" class="inputText tag-search-input" type="text" placeholder="Rechercher un tag..." />
+
+                            <div id="tagsContainer" class="tag-checkbox-container">
+                                {{range .Tags}}
+                                <label class="checkbox-label tag-checkbox-item">
+                                    <input type="checkbox" name="tags" value="{{.}}"> {{.}}
+                                </label>
+                                {{else}}
+                                <p class="empty-tag-note">Aucun tag disponible pour le moment. Créez-en un nouveau ci-dessous.</p>
+                                {{end}}
+                                <p id="tagNoMatch" class="empty-tag-note" style="display:none;">Aucun tag ne correspond à votre recherche.</p>
+                            </div>
+                            
+                            <button type="button" id="toggleNewTagBtn" class="btn-secondary" style="width: 100%; margin-top: 0.5rem;">+ Créer un nouveau tag</button>
+
+                            <div id="newTagRow" class="new-tag-row hidden" style="margin-top: 0.5rem;">
+                                <input id="newTagName" name="newTagName" class="inputText" type="text" placeholder="Nom du nouveau tag..." />
+                                <button type="button" id="createTagBtn" class="btn-secondary btn-create-tag">Créer</button>
+                            </div>
                         </div>
                     </div>
-                    
+
+                    <p class="form-note">Si le tag existe déjà, la publication sera refusée.</p>
+
                     <div class="form-group">
                         <label for="media">Lien d'image ou pochette d'album (optionnel)</label>
                         <input class="inputText" id="media" name="media" placeholder="Ex: https://image.url/cover.jpg" type="text" />
@@ -93,5 +108,127 @@
             </section>
         </div>
     </main>
+    <script>
+        const tagSearch = document.getElementById('tagSearch');
+        const tagsContainer = document.getElementById('tagsContainer');
+        const tagNoMatch = document.getElementById('tagNoMatch');
+        const toggleNewTagBtn = document.getElementById('toggleNewTagBtn');
+        const newTagRow = document.getElementById('newTagRow');
+        const createTagBtn = document.getElementById('createTagBtn');
+        const newTagNameInput = document.getElementById('newTagName');
+
+        function updateTagFilter() {
+            const query = tagSearch.value.trim().toLowerCase();
+            let hasVisible = false;
+
+            tagsContainer.querySelectorAll('.tag-checkbox-item').forEach((item) => {
+                const labelText = item.textContent.trim().toLowerCase();
+                const visible = query === '' || labelText.includes(query);
+                item.style.display = visible ? 'inline-flex' : 'none';
+                if (visible) {
+                    hasVisible = true;
+                }
+            });
+
+            if (tagNoMatch) {
+                tagNoMatch.style.display = query !== '' && !hasVisible ? 'block' : 'none';
+            }
+        }
+
+        function tagExistsInList(tagName) {
+            const lowerTag = tagName.trim().toLowerCase();
+            return Array.from(tagsContainer.querySelectorAll('.tag-checkbox-item')).some((item) => item.textContent.trim().toLowerCase() === lowerTag);
+        }
+
+        function addNewTagToList(tagName) {
+            if (!tagName) {
+                return;
+            }
+
+            const label = document.createElement('label');
+            label.className = 'checkbox-label tag-checkbox-item';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'tags';
+            checkbox.value = tagName;
+            checkbox.checked = true;
+
+            label.appendChild(checkbox);
+            label.append( );
+            tagsContainer.appendChild(label);
+        }
+
+        if (tagSearch && tagsContainer) {
+            tagSearch.addEventListener('input', updateTagFilter);
+        }
+
+        if (toggleNewTagBtn && newTagRow) {
+            toggleNewTagBtn.addEventListener('click', () => {
+                newTagRow.classList.toggle('hidden');
+                if (!newTagRow.classList.contains('hidden')) {
+                    newTagNameInput.focus();
+                }
+            });
+        }
+
+        const newTagError = document.getElementById('newTagError');
+
+        if (createTagBtn && newTagNameInput) {
+            createTagBtn.addEventListener('click', async () => {
+                const tagName = newTagNameInput.value.trim();
+                if (tagName === '') {
+                    newTagError.textContent = 'Le nom du tag est requis.';
+                    newTagError.classList.remove('hidden');
+                    newTagNameInput.focus();
+                    return;
+                }
+
+                if (tagExistsInList(tagName)) {
+                    const existingCheckbox = Array.from(tagsContainer.querySelectorAll('.tag-checkbox-item input')).find((input) => input.value.trim().toLowerCase() === tagName.toLowerCase());
+                    if (existingCheckbox) {
+                        existingCheckbox.checked = true;
+                    }
+                    newTagError.textContent = 'Ce tag existe déjà et a été sélectionné.';
+                    newTagError.classList.remove('hidden');
+                    return;
+                }
+
+                const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+                const body = new URLSearchParams();
+                body.append('action', 'createTag');
+                body.append('newTagName', tagName);
+                body.append('csrf_token', csrfToken);
+
+                try {
+                    const response = await fetch('/createPost', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: body.toString()
+                    });
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        newTagError.textContent = data.error || 'Erreur lors de la création du tag.';
+                        newTagError.classList.remove('hidden');
+                        return;
+                    }
+
+                    addNewTagToList(data.tag);
+                    newTagNameInput.value = '';
+                    newTagError.textContent = '';
+                    newTagError.classList.add('hidden');
+                    newTagRow.classList.add('hidden');
+                    if (tagSearch) tagSearch.value = '';
+                    updateTagFilter();
+                } catch (err) {
+                    newTagError.textContent = 'Erreur réseau lors de la création du tag.';
+                    newTagError.classList.remove('hidden');
+                }
+            });
+        }
+    </script>
 </body>
 </html>

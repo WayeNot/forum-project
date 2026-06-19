@@ -150,6 +150,67 @@
     width: 100%;
 }
 
+.form-note {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: -0.75rem;
+    margin-bottom: 1rem;
+}
+
+.tag-selection-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.tags-action-row {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+    align-items: center;
+}
+
+.new-tag-row {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+    align-items: center;
+}
+
+.tags-action-row .tag-search-input {
+    flex: 1;
+}
+
+.new-tag-row .inputText {
+    flex: 1;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-create-tag {
+    min-width: 130px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.tag-search-input {
+    margin-bottom: 0.25rem;
+}
+
 .checkbox-label {
     display: flex;
     align-items: center;

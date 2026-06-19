@@ -13,6 +13,7 @@ type TagData struct {
 }
 
 func CreateTag(w http.ResponseWriter, r *http.Request) {
+	println("AHAHAHA")
 	var postData TagData
 
 	userData, _ := getLoggedUser(r)

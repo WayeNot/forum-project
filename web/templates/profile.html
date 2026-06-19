@@ -33,7 +33,6 @@
                 <a href="/"><i class="fa-solid fa-house" aria-hidden="true"></i> <span>Accueil</span></a>
                 {{if .IsLogged}}
                 <a href="/createPost"><i class="fa-solid fa-plus" aria-hidden="true"></i> <span>Créer</span></a>
-                <a href="/createTag"><i class="fa-solid fa-hashtag" aria-hidden="true"></i> <span>Tag</span></a>
                 <a href="/settings" aria-label="Paramètres du compte"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> <span>Paramètres</span></a>
                 <a href="/user/@{{.UserData.Username}}"><i class="fa-solid fa-user" aria-hidden="true"></i> <span>Mon Profil</span></a>
                 <a href="/logout" class="logout-btn"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> <span>Déconnexion</span></a>
@@ -45,24 +44,6 @@
     </header>
 
     <main class="main-layout">
-        <aside class="sidebar">
-            <div class="sidebar-section">
-                <a href="/" class="tag-item full-width">
-                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Accueil
-                </a>
-            </div>
-
-            {{if .IsLogged}}
-            <div class="sidebar-user-card">
-                <img src="{{.UserData.PpURL}}" alt="Photo de profil de {{.UserData.Username}}" class="user-card-avatar" width="42" height="42">
-                <div class="user-card-info">
-                    <span class="user-card-name">{{.UserData.Username}}</span>
-                    <span class="user-card-email">{{.UserData.Mail}}</span>
-                </div>
-            </div>
-            {{end}}
-        </aside>
-
         <div class="content-area">
             <section class="profile-card">
                 {{if .TargetUser.Banner}}

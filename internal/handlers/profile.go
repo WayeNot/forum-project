@@ -219,7 +219,7 @@ func UserSettings(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		if ppURL == "" || strings.Contains(ppURL, "giphy.gif") {
+		if ppURL == "" {
 			ppURL = "/static/images/default-avatar.svg"
 		}
 

@@ -1,11 +1,12 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/WayeNot/forum-project/internal/db"
 	"github.com/WayeNot/forum-project/internal/templates"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
 )
 
 func SetCookie(userID int) *http.Cookie {
